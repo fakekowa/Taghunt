@@ -8,55 +8,108 @@ using TagHunt.Services.Interfaces;
 
 namespace TagHunt.ViewModels
 {
+    /// <summary>
+    /// ViewModel that handles authentication operations including login, registration, and logout
+    /// </summary>
     public partial class AuthViewModel : BaseViewModel
     {
+        #region Fields
+
         private readonly IAuthService _authService;
         private string _email = string.Empty;
         private string _password = string.Empty;
         private string _username = string.Empty;
         private string _errorMessage = string.Empty;
 
+        #endregion
+
+        #region Observable Properties
+
+        /// <summary>
+        /// Indicates whether an authentication operation is in progress
+        /// </summary>
         [ObservableProperty]
         private bool isLoading;
 
+        /// <summary>
+        /// Indicates whether a user is currently logged in
+        /// </summary>
         [ObservableProperty]
         private bool isLoggedIn;
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the user's email address
+        /// </summary>
         public string Email
         {
             get => _email;
             set => SetProperty(ref _email, value);
         }
 
+        /// <summary>
+        /// Gets or sets the user's password
+        /// </summary>
         public string Password
         {
             get => _password;
             set => SetProperty(ref _password, value);
         }
 
+        /// <summary>
+        /// Gets or sets the user's username
+        /// </summary>
         public string Username
         {
             get => _username;
             set => SetProperty(ref _username, value);
         }
 
+        /// <summary>
+        /// Gets or sets the current error message to display to the user
+        /// </summary>
         public string ErrorMessage
         {
             get => _errorMessage;
             set => SetProperty(ref _errorMessage, value);
         }
 
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the AuthViewModel
+        /// </summary>
+        /// <param name="authService">The authentication service to use</param>
         public AuthViewModel(IAuthService authService)
         {
             _authService = authService;
             CheckLoginStatus();
         }
 
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Checks the current login status asynchronously
+        /// </summary>
         private async void CheckLoginStatus()
         {
             IsLoggedIn = await _authService.IsUserLoggedInAsync();
         }
 
+        #endregion
+
+        #region Commands
+
+        /// <summary>
+        /// Command to handle user login
+        /// </summary>
         [RelayCommand]
         private async Task LoginAsync()
         {
@@ -92,6 +145,9 @@ namespace TagHunt.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to handle user registration
+        /// </summary>
         [RelayCommand]
         private async Task RegisterAsync()
         {
@@ -128,6 +184,9 @@ namespace TagHunt.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to handle user logout
+        /// </summary>
         [RelayCommand]
         private async Task LogoutAsync()
         {
@@ -152,6 +211,9 @@ namespace TagHunt.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to handle password reset
+        /// </summary>
         [RelayCommand]
         private async Task ResetPasswordAsync()
         {
@@ -179,16 +241,24 @@ namespace TagHunt.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to the registration page
+        /// </summary>
         [RelayCommand]
         private async Task NavigateToRegisterAsync()
         {
             await Shell.Current.GoToAsync("RegisterPage");
         }
 
+        /// <summary>
+        /// Command to navigate to the login page
+        /// </summary>
         [RelayCommand]
         private async Task NavigateToLoginAsync()
         {
             await Shell.Current.GoToAsync("//LoginPage");
         }
+
+        #endregion
     }
 } 

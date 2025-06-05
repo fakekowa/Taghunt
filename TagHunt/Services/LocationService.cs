@@ -7,21 +7,49 @@ using TagHunt.Services.Interfaces;
 
 namespace TagHunt.Services;
 
+/// <summary>
+/// Service that provides GPS location tracking and management functionality
+/// </summary>
 public class LocationService : ILocationService
 {
+    #region Fields
+
     private readonly IGeolocation _geolocation;
     private readonly System.Timers.Timer _timer;
     private bool _isTracking;
 
+    #endregion
+
+    #region Events
+
+    /// <summary>
+    /// Event that fires when the device location changes during tracking
+    /// </summary>
     public event EventHandler<LocationGps> LocationChanged = delegate { };
 
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes a new instance of the LocationService
+    /// </summary>
+    /// <param name="geolocation">The geolocation service to use for GPS operations</param>
     public LocationService(IGeolocation geolocation)
     {
         _geolocation = geolocation;
-        _timer = new System.Timers.Timer(10000); // 10 seconds
+        _timer = new System.Timers.Timer(10000); // Update every 10 seconds
         _timer.Elapsed += async (s, e) => await UpdateLocationAsync();
     }
 
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Requests location permission from the user
+    /// </summary>
+    /// <returns>True if permission was granted, false otherwise</returns>
     public async Task<bool> RequestLocationPermissionAsync()
     {
         try
@@ -35,6 +63,11 @@ public class LocationService : ILocationService
         }
     }
 
+    /// <summary>
+    /// Gets the current GPS location of the device
+    /// </summary>
+    /// <returns>The current location as LocationGps</returns>
+    /// <exception cref="InvalidOperationException">Thrown when location cannot be obtained</exception>
     public async Task<LocationGps> GetCurrentLocationAsync()
     {
         try
@@ -59,6 +92,10 @@ public class LocationService : ILocationService
         }
     }
 
+    /// <summary>
+    /// Starts continuous location updates using a timer
+    /// </summary>
+    /// <returns>Task representing the async operation</returns>
     public async Task StartLocationUpdatesAsync()
     {
         if (_isTracking)
@@ -71,15 +108,30 @@ public class LocationService : ILocationService
         await Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Stops continuous location updates
+    /// </summary>
+    /// <returns>Task representing the async operation</returns>
     public async Task StopLocationUpdatesAsync()
     {
-        if (!_isTracking) return;
+        if (!_isTracking)
+        {
+            return;
+        }
 
         _isTracking = false;
         _timer.Stop();
         await Task.CompletedTask;
     }
 
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Updates the current location and fires the LocationChanged event
+    /// </summary>
+    /// <returns>Task representing the async operation</returns>
     private async Task UpdateLocationAsync()
     {
         try
@@ -89,7 +141,9 @@ public class LocationService : ILocationService
         }
         catch
         {
-            // Handle or log error as needed
+            // Handle or log error as needed - silently fail to avoid disrupting tracking
         }
     }
+
+    #endregion
 } 

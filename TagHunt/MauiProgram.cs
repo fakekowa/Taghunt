@@ -10,8 +10,15 @@ using System.Reflection;
 
 namespace TagHunt;
 
+/// <summary>
+/// Main program class that configures and builds the MAUI application
+/// </summary>
 public static class MauiProgram
 {
+	/// <summary>
+	/// Creates and configures the MAUI application with all necessary services and dependencies
+	/// </summary>
+	/// <returns>A configured MauiApp instance</returns>
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
@@ -23,7 +30,7 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-		// Add configuration
+		// Add configuration from embedded appsettings.json
 		var assembly = Assembly.GetExecutingAssembly();
 		using var stream = assembly.GetManifestResourceStream("TagHunt.appsettings.json");
 		if (stream != null)
@@ -34,10 +41,11 @@ public static class MauiProgram
 			builder.Configuration.AddConfiguration(config);
 		}
 
-		// Register services
+		// Register core services
 		builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 		builder.Services.AddSingleton<FirebaseClient>();
 
+		// Register authentication service with Firebase configuration
 		builder.Services.AddSingleton<IAuthService>(provider =>
 		{
 			var configService = provider.GetRequiredService<IConfigurationService>();
@@ -46,14 +54,15 @@ public static class MauiProgram
 			return new FirebaseAuthService(config.ApiKey, config.AuthDomain);
 		});
 
-		// Register ViewModels
+		// Register ViewModels for dependency injection
 		builder.Services.AddSingleton<AuthViewModel>();
 
-		// Register Pages
+		// Register Pages for dependency injection
 		builder.Services.AddTransient<LoginPage>();
 		builder.Services.AddTransient<RegisterPage>();
 
 #if DEBUG
+		// Add debug logging in development builds
 		builder.Logging.AddDebug();
 #endif
 

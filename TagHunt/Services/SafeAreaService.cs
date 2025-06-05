@@ -1,6 +1,5 @@
 using Microsoft.Maui.Graphics;
 using TagHunt.Services.Interfaces;
-using System.Linq;
 #if IOS
 using UIKit;
 using Foundation;
@@ -13,8 +12,15 @@ using AndroidX.Core.View;
 
 namespace TagHunt.Services
 {
+    /// <summary>
+    /// Service that provides safe area insets and dynamic padding for different platforms
+    /// </summary>
     public class SafeAreaService : ISafeAreaService
     {
+        /// <summary>
+        /// Gets the safe area insets for the current platform
+        /// </summary>
+        /// <returns>Safe area insets as Thickness</returns>
         public Thickness GetSafeAreaInsets()
         {
 #if ANDROID
@@ -26,6 +32,12 @@ namespace TagHunt.Services
 #endif
         }
 
+        /// <summary>
+        /// Gets dynamic padding that respects safe areas while maintaining minimum values
+        /// </summary>
+        /// <param name="minimumHorizontal">Minimum horizontal padding</param>
+        /// <param name="minimumVertical">Minimum vertical padding</param>
+        /// <returns>Dynamic padding as Thickness</returns>
         public Thickness GetDynamicPadding(double minimumHorizontal = 20, double minimumVertical = 20)
         {
             var safeArea = GetSafeAreaInsets();
@@ -39,14 +51,24 @@ namespace TagHunt.Services
         }
 
 #if ANDROID
+        /// <summary>
+        /// Gets safe area insets for Android devices, including notch/cutout handling
+        /// </summary>
+        /// <returns>Android safe area insets</returns>
         private Thickness GetAndroidSafeArea()
         {
             var context = Platform.CurrentActivity ?? Android.App.Application.Context;
-            if (context == null) return new Thickness(20);
+            if (context == null)
+            {
+                return new Thickness(20);
+            }
 
             // Get display metrics
             var displayMetrics = context.Resources?.DisplayMetrics;
-            if (displayMetrics == null) return new Thickness(20);
+            if (displayMetrics == null)
+            {
+                return new Thickness(20);
+            }
 
             // For Android, we typically just need standard padding
             // as the system handles most safe area concerns
@@ -80,10 +102,17 @@ namespace TagHunt.Services
 #endif
 
 #if IOS
+        /// <summary>
+        /// Gets safe area insets for iOS devices
+        /// </summary>
+        /// <returns>iOS safe area insets</returns>
         private Thickness GetIOSSafeArea()
         {
             var window = GetKeyWindow();
-            if (window == null) return new Thickness(20, 44, 20, 34); // Default for iPhone X+ style
+            if (window == null)
+            {
+                return new Thickness(20, 44, 20, 34); // Default for iPhone X+ style
+            }
 
             var safeAreaInsets = window.SafeAreaInsets;
             
@@ -96,6 +125,10 @@ namespace TagHunt.Services
             );
         }
 
+        /// <summary>
+        /// Gets the key window for iOS, handling different iOS versions
+        /// </summary>
+        /// <returns>The key UIWindow or null if not found</returns>
         private UIKit.UIWindow? GetKeyWindow()
         {
             // Use ConnectedScenes only on iOS 13+

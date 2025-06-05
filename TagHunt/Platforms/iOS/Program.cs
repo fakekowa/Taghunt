@@ -3,13 +3,18 @@ using UIKit;
 
 namespace TagHunt;
 
+/// <summary>
+/// Main entry point for the iOS application
+/// </summary>
 public class Program
 {
-	// This is the main entry point of the application.
+	/// <summary>
+	/// Main entry point of the iOS application
+	/// </summary>
+	/// <param name="args">Command line arguments</param>
 	static void Main(string[] args)
 	{
-		// if you want to use a different Application Delegate class from "AppDelegate"
-		// you can specify it here.
+		// Initialize the iOS application with the AppDelegate
 		UIApplication.Main(args, null, typeof(AppDelegate));
 	}
 }

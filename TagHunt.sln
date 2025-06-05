@@ -1,0 +1,15 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagHunt", "TagHunt\TagHunt.csproj", "{7BECE3A1-7A8E-4554-B8C0-B44ABFB9D07A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BECE3A1-7A8E-4554-B8C0-B44ABFB9D07A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BECE3A1-7A8E-4554-B8C0-B44ABFB9D07A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BECE3A1-7A8E-4554-B8C0-B44ABFB9D07A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BECE3A1-7A8E-4554-B8C0-B44ABFB9D07A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

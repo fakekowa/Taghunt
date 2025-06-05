@@ -4,10 +4,10 @@ TagHunt is an innovative location-based multiplayer mobile game that brings the 
 
 ## Project Progress
 ```
-Phase 1 (Basic POC) [===>................] 15%
-├── User Authentication   [=>..................] 5%
-├── Location Sharing     [...................] 0%
-├── Map Integration      [...................] 0%
+Phase 1 (Basic POC) [========>...........] 40%
+├── User Authentication   [====================] 100%
+├── Location Sharing     [====================] 100%
+├── Map Integration      [=====>..............] 25%
 └── Friend Management    [...................] 0%
 
 Phase 2 (Full Game)    [...................] 0%

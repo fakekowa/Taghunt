@@ -50,3 +50,11 @@ _ReSharper*/
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace 
+
+# Configuration files with sensitive data
+appsettings.Production.json
+appsettings.*.json
+!appsettings.json
+.env
+.env.local
+.env.production

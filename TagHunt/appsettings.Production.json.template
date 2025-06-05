@@ -1,0 +1,14 @@
+{
+  "Firebase": {
+    "iOS": {
+      "ApiKey": "YOUR_IOS_API_KEY_HERE",
+      "AuthDomain": "YOUR_PROJECT_ID.firebaseapp.com",
+      "ProjectId": "YOUR_PROJECT_ID"
+    },
+    "Android": {
+      "ApiKey": "YOUR_ANDROID_API_KEY_HERE",
+      "AuthDomain": "YOUR_PROJECT_ID.firebaseapp.com",
+      "ProjectId": "YOUR_PROJECT_ID"
+    }
+  }
+} 

@@ -11,11 +11,12 @@ namespace TagHunt.Services
         private readonly FirebaseAuthClient _authClient;
         private Firebase.Auth.UserCredential? _currentUserCredential;
 
-        public FirebaseAuthService(string apiKey)
+        public FirebaseAuthService(string apiKey, string authDomain)
         {
             _authClient = new FirebaseAuthClient(new FirebaseAuthConfig
             {
-                ApiKey = apiKey
+                ApiKey = apiKey,
+                AuthDomain = authDomain
             });
         }
 

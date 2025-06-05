@@ -44,6 +44,14 @@ public static class MauiProgram
 		// Register core services
 		builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 		builder.Services.AddSingleton<FirebaseClient>();
+		
+		// Register database service
+		builder.Services.AddSingleton<IFirebaseDbService>(provider =>
+		{
+			var configService = provider.GetRequiredService<IConfigurationService>();
+			var config = configService.GetFirebaseConfig();
+			return new FirebaseDbService($"https://{config.ProjectId}-default-rtdb.firebaseio.com/");
+		});
 
 		// Register authentication service with Firebase configuration
 		builder.Services.AddSingleton<IAuthService>(provider =>
@@ -56,10 +64,14 @@ public static class MauiProgram
 
 		// Register ViewModels for dependency injection
 		builder.Services.AddSingleton<AuthViewModel>();
+		builder.Services.AddTransient<DashboardViewModel>();
+		builder.Services.AddTransient<AccountSettingsViewModel>();
 
 		// Register Pages for dependency injection
 		builder.Services.AddTransient<LoginPage>();
 		builder.Services.AddTransient<RegisterPage>();
+		builder.Services.AddTransient<DashboardPage>();
+		builder.Services.AddTransient<AccountSettingsPage>();
 
 #if DEBUG
 		// Add debug logging in development builds

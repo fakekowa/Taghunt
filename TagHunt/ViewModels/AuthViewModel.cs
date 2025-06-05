@@ -96,11 +96,40 @@ namespace TagHunt.ViewModels
         #region Private Methods
 
         /// <summary>
-        /// Checks the current login status asynchronously
+        /// Checks the current login status asynchronously and auto-navigates if logged in
         /// </summary>
         private async void CheckLoginStatus()
         {
-            IsLoggedIn = await _authService.IsUserLoggedInAsync();
+            try
+            {
+                // Give the auth service time to restore state
+                await Task.Delay(500);
+                
+                IsLoggedIn = await _authService.IsUserLoggedInAsync();
+                
+                if (IsLoggedIn)
+                {
+                    // User is already logged in, enable flyout and navigate to dashboard
+                    var currentUser = await _authService.GetCurrentUserAsync();
+                    
+                    if (Shell.Current is AppShell appShell)
+                    {
+                        appShell.SetFlyoutEnabled(true);
+                        if (currentUser != null)
+                        {
+                            appShell.UpdateUserInfo(currentUser.DisplayName ?? "User", currentUser.Email ?? "");
+                        }
+                    }
+                    
+                    await Shell.Current.GoToAsync("///Dashboard");
+                }
+            }
+            catch (Exception ex)
+            {
+                // If there's an error checking login status, just stay on login page
+                System.Diagnostics.Debug.WriteLine($"Error checking login status: {ex.Message}");
+                IsLoggedIn = false;
+            }
         }
 
         #endregion
@@ -124,15 +153,20 @@ namespace TagHunt.ViewModels
                 IsLoading = true;
                 ErrorMessage = string.Empty;
 
-                await _authService.LoginAsync(Email, Password);
+                var user = await _authService.LoginAsync(Email, Password);
                 IsLoggedIn = true;
 
                 // Clear sensitive data
                 Email = string.Empty;
                 Password = string.Empty;
 
-                // Navigate to main page after successful login
-                await Shell.Current.GoToAsync("//MainPage");
+                // Enable flyout and navigate to dashboard page after successful login
+                if (Shell.Current is AppShell appShell)
+                {
+                    appShell.SetFlyoutEnabled(true);
+                    appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
+                }
+                await Shell.Current.GoToAsync("///Dashboard");
             }
             catch (System.Exception ex)
             {
@@ -162,7 +196,7 @@ namespace TagHunt.ViewModels
                 IsLoading = true;
                 ErrorMessage = string.Empty;
 
-                await _authService.RegisterUserAsync(Email, Password, Username);
+                var user = await _authService.RegisterUserAsync(Email, Password, Username);
                 IsLoggedIn = true;
 
                 // Clear sensitive data
@@ -170,8 +204,13 @@ namespace TagHunt.ViewModels
                 Password = string.Empty;
                 Username = string.Empty;
 
-                // Navigate to main page after successful registration
-                await Shell.Current.GoToAsync("//MainPage");
+                // Enable flyout and navigate to dashboard page after successful registration
+                if (Shell.Current is AppShell appShell)
+                {
+                    appShell.SetFlyoutEnabled(true);
+                    appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
+                }
+                await Shell.Current.GoToAsync("///Dashboard");
             }
             catch (System.Exception ex)
             {

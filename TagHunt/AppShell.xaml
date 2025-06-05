@@ -1,24 +1,121 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
     x:Class="TagHunt.AppShell"
+    x:Name="AppShellInstance"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:TagHunt"
     xmlns:views="clr-namespace:TagHunt.Views"
     Shell.FlyoutBehavior="Disabled"
     Shell.TabBarIsVisible="False"
-    Shell.NavBarIsVisible="False">
+    Shell.NavBarIsVisible="False"
+    FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
 
+    <!-- Flyout Header -->
+    <Shell.FlyoutHeader>
+        <Grid BackgroundColor="{StaticResource Primary}"
+              HeightRequest="200"
+              Padding="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <!-- User Avatar -->
+            <Frame Grid.Row="0"
+                   WidthRequest="80"
+                   HeightRequest="80"
+                   CornerRadius="40"
+                   Padding="0"
+                   BackgroundColor="White"
+                   HasShadow="False"
+                   BorderColor="Transparent"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center">
+                
+                <Label Text="👤"
+                       FontSize="40"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       TextColor="{StaticResource Primary}" />
+            </Frame>
+            
+            <!-- User Display Name -->
+            <Label Grid.Row="1"
+                   x:Name="FlyoutUserName"
+                   Text="Welcome to TagHunt"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center"
+                   Margin="0,10,0,0" />
+            
+            <!-- User Email -->
+            <Label Grid.Row="2"
+                   x:Name="FlyoutUserEmail"
+                   Text=""
+                   FontSize="14"
+                   TextColor="White"
+                   Opacity="0.9"
+                   HorizontalOptions="Center" />
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <!-- Login Page (No Flyout) -->
     <ShellContent
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="LoginPage"
+        Shell.FlyoutBehavior="Disabled"
         Shell.TabBarIsVisible="False"
         Shell.NavBarIsVisible="False" />
 
+    <!-- Main App with Flyout Menu -->
+    <FlyoutItem Title="Dashboard" 
+                Icon="home.png">
+        <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" 
+                      Route="Dashboard" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Find Friends" 
+                Icon="people.png">
+        <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" 
+                      Route="Friends" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Map" 
+                Icon="map.png">
+        <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" 
+                      Route="Map" />
+    </FlyoutItem>
+
+    <!-- Flyout Footer with Settings and Logout -->
+    <Shell.FlyoutFooter>
+        <StackLayout Padding="20,10"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+            
+            <Button Text="⚙️ Account Settings"
+                    FontSize="16"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                    HorizontalOptions="FillAndExpand"
+                    Command="{Binding Source={x:Reference AppShellInstance}, Path=AccountSettingsCommand}"
+                    Margin="0,5" />
+            
+            <Button Text="🚪 Logout"
+                    FontSize="16"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource Danger}"
+                    HorizontalOptions="FillAndExpand"
+                    Command="{Binding Source={x:Reference AppShellInstance}, Path=LogoutCommand}"
+                    Margin="0,5" />
+        </StackLayout>
+    </Shell.FlyoutFooter>
+
+    <!-- Additional Routes -->
     <ShellContent
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage"
-        Shell.TabBarIsVisible="False"
-        Shell.NavBarIsVisible="False" />
+        ContentTemplate="{DataTemplate views:AccountSettingsPage}"
+        Route="AccountSettingsPage"
+        Shell.FlyoutBehavior="Flyout" />
 
 </Shell>

@@ -4,24 +4,18 @@ using TagHunt.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using TagHunt.Services.Interfaces;
 
 namespace TagHunt.ViewModels
 {
-    public partial class AuthViewModel : ObservableObject
+    public partial class AuthViewModel : BaseViewModel
     {
         private readonly IAuthService _authService;
-
-        [ObservableProperty]
-        private string email;
-
-        [ObservableProperty]
-        private string password;
-
-        [ObservableProperty]
-        private string username;
-
-        [ObservableProperty]
-        private string errorMessage;
+        private string _email = string.Empty;
+        private string _password = string.Empty;
+        private string _username = string.Empty;
+        private string _errorMessage = string.Empty;
 
         [ObservableProperty]
         private bool isLoading;
@@ -29,9 +23,40 @@ namespace TagHunt.ViewModels
         [ObservableProperty]
         private bool isLoggedIn;
 
+        public string Email
+        {
+            get => _email;
+            set => SetProperty(ref _email, value);
+        }
+
+        public string Password
+        {
+            get => _password;
+            set => SetProperty(ref _password, value);
+        }
+
+        public string Username
+        {
+            get => _username;
+            set => SetProperty(ref _username, value);
+        }
+
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set => SetProperty(ref _errorMessage, value);
+        }
+
+        public ICommand LoginCommand { get; }
+        public ICommand RegisterCommand { get; }
+        public ICommand LogoutCommand { get; }
+
         public AuthViewModel(IAuthService authService)
         {
             _authService = authService;
+            LoginCommand = new Command(async () => await LoginAsync());
+            RegisterCommand = new Command(async () => await RegisterAsync());
+            LogoutCommand = new Command(async () => await LogoutAsync());
             CheckLoginStatus();
         }
 

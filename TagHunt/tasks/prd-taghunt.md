@@ -1,5 +1,9 @@
 # TagHunt - Product Requirements Document
 
+## Development Workflow Rules
+1. Code Changes: Direct file changes and edits are allowed without explicit permission
+2. Git Commits: **MUST** ask for approval before committing or pushing changes to GitHub
+
 ## Project Overview
 Create a location-based multiplayer mobile game called "TagHunt" - a real-world tag game using GPS coordinates.
 

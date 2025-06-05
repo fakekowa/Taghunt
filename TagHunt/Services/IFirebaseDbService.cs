@@ -1,12 +1,16 @@
 using TagHunt.Models;
 
-namespace TagHunt.Services;
+namespace TagHunt.Services.Interfaces;
 
 public interface IFirebaseDbService
 {
-    Task<T> GetAsync<T>(string path) where T : class;
-    Task SetAsync<T>(string path, T data) where T : class;
-    Task UpdateAsync<T>(string path, T data) where T : class;
-    Task DeleteAsync(string path);
-    Task<List<T>> QueryAsync<T>(string path, string orderBy = null, string equalTo = null) where T : class;
+    Task<bool> CreateGameAsync(Game game);
+    Task<bool> UpdateGameAsync(Game game);
+    Task<Game?> GetGameAsync(string gameId);
+    Task<List<Game>> GetActiveGamesAsync();
+    Task<bool> DeleteGameAsync(string gameId);
+    Task<bool> JoinGameAsync(string gameId, string userId);
+    Task<bool> LeaveGameAsync(string gameId, string userId);
+    Task<bool> UpdatePlayerLocationAsync(string gameId, string userId, PlayerLocation location);
+    Task<List<PlayerLocation>> GetPlayerLocationsAsync(string gameId);
 } 

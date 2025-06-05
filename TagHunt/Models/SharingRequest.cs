@@ -2,11 +2,11 @@ namespace TagHunt.Models;
 
 public class SharingRequest
 {
-    public string Id { get; set; }
-    public string RequesterId { get; set; }
-    public string RecipientId { get; set; }
+    public required string Id { get; set; }
+    public required string RequesterId { get; set; }
+    public required string RecipientId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ExpiresAt { get; set; }
     public bool IsAccepted { get; set; }
-    public LocationGps LastLocation { get; set; }
+    public required LocationGps LastLocation { get; set; }
 } 

@@ -1,74 +1,75 @@
-using TagHunt.Models;
-using Firebase.Auth;
-using Firebase.Database;
 using System;
 using System.Threading.Tasks;
+using Firebase.Auth;
+using TagHunt.Models;
+using TagHunt.Services.Interfaces;
 
 namespace TagHunt.Services
 {
     public class FirebaseAuthService : IAuthService
     {
         private readonly FirebaseAuthClient _authClient;
-        private readonly FirebaseClient _database;
-        private User _currentUser;
+        private Firebase.Auth.User? _currentUser;
 
-        public FirebaseAuthService(FirebaseAuthClient authClient, FirebaseClient database)
+        public FirebaseAuthService(string apiKey)
         {
-            _authClient = authClient;
-            _database = database;
+            _authClient = new FirebaseAuthClient(new FirebaseAuthConfig
+            {
+                ApiKey = apiKey
+            });
         }
 
-        public async Task<User> RegisterUserAsync(string email, string password, string username)
+        public async Task<Models.User> RegisterUserAsync(string email, string password, string username)
+        {
+            var userCredential = await _authClient.CreateUserWithEmailAndPasswordAsync(email, password);
+            var firebaseUser = userCredential.User;
+            await firebaseUser.UpdateUserProfileAsync(new UserProfile { DisplayName = username });
+
+            return new Models.User
+            {
+                Id = firebaseUser.Uid,
+                Email = firebaseUser.Info.Email,
+                Username = username
+            };
+        }
+
+        public async Task<Models.User> LoginAsync(string email, string password)
+        {
+            var userCredential = await _authClient.SignInWithEmailAndPasswordAsync(email, password);
+            _currentUser = userCredential.User;
+
+            return new Models.User
+            {
+                Id = _currentUser.Uid,
+                Email = _currentUser.Info.Email,
+                Username = _currentUser.Info.DisplayName
+            };
+        }
+
+        public async Task<Models.User> GetCurrentUserAsync()
+        {
+            if (_currentUser == null) throw new InvalidOperationException("No user is currently logged in");
+
+            return new Models.User
+            {
+                Id = _currentUser.Uid,
+                Email = _currentUser.Info.Email,
+                Username = _currentUser.Info.DisplayName
+            };
+        }
+
+        public async Task<bool> UpdateUserProfileAsync(Models.User user)
         {
             try
             {
-                var authResult = await _authClient.CreateUserWithEmailAndPasswordAsync(email, password);
-                var user = new User
-                {
-                    Id = authResult.User.Uid,
-                    Email = email,
-                    Username = username,
-                    DisplayName = username
-                };
+                if (_currentUser == null) throw new InvalidOperationException("No user is currently logged in");
 
-                await _database
-                    .Child("users")
-                    .Child(user.Id)
-                    .PutAsync(user);
-
-                _currentUser = user;
-                return user;
+                await _currentUser.UpdateUserProfileAsync(new UserProfile { DisplayName = user.Username });
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception($"Registration failed: {ex.Message}");
-            }
-        }
-
-        public async Task<User> LoginAsync(string email, string password)
-        {
-            try
-            {
-                var authResult = await _authClient.SignInWithEmailAndPasswordAsync(email, password);
-                var user = await _database
-                    .Child("users")
-                    .Child(authResult.User.Uid)
-                    .OnceSingleAsync<User>();
-
-                user.LastLoginAt = DateTime.UtcNow;
-                user.IsOnline = true;
-
-                await _database
-                    .Child("users")
-                    .Child(user.Id)
-                    .PatchAsync(new { LastLoginAt = user.LastLoginAt, IsOnline = true });
-
-                _currentUser = user;
-                return user;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Login failed: {ex.Message}");
+                return false;
             }
         }
 
@@ -76,44 +77,18 @@ namespace TagHunt.Services
         {
             try
             {
-                if (_currentUser != null)
-                {
-                    await _database
-                        .Child("users")
-                        .Child(_currentUser.Id)
-                        .PatchAsync(new { IsOnline = false });
-                }
-
-                await _authClient.SignOutAsync();
                 _currentUser = null;
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception($"Logout failed: {ex.Message}");
+                return false;
             }
-        }
-
-        public async Task<User> GetCurrentUserAsync()
-        {
-            if (_currentUser != null)
-                return _currentUser;
-
-            var currentUser = _authClient.User;
-            if (currentUser == null)
-                return null;
-
-            _currentUser = await _database
-                .Child("users")
-                .Child(currentUser.Uid)
-                .OnceSingleAsync<User>();
-
-            return _currentUser;
         }
 
         public Task<bool> IsUserLoggedInAsync()
         {
-            return Task.FromResult(_authClient.User != null);
+            return Task.FromResult(_currentUser != null);
         }
 
         public async Task<bool> ResetPasswordAsync(string email)
@@ -126,24 +101,6 @@ namespace TagHunt.Services
             catch (Exception ex)
             {
                 throw new Exception($"Password reset failed: {ex.Message}");
-            }
-        }
-
-        public async Task<bool> UpdateUserProfileAsync(User user)
-        {
-            try
-            {
-                await _database
-                    .Child("users")
-                    .Child(user.Id)
-                    .PutAsync(user);
-                
-                _currentUser = user;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Profile update failed: {ex.Message}");
             }
         }
     }

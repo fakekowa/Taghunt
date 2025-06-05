@@ -55,5 +55,11 @@ namespace TagHunt.Services.Interfaces
         /// <param name="email">Email address to send reset link to</param>
         /// <returns>True if successful, false otherwise</returns>
         Task<bool> ResetPasswordAsync(string email);
+        
+        /// <summary>
+        /// Tests Firebase configuration and connectivity
+        /// </summary>
+        /// <returns>True if configuration is valid, throws exception with details if not</returns>
+        Task<bool> TestConfigurationAsync();
     }
 } 

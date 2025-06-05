@@ -89,11 +89,120 @@ namespace TagHunt.ViewModels
         {
             _authService = authService;
             CheckLoginStatus();
+            
+            // Test Firebase configuration in background 
+            _ = Task.Run(async () => await TestFirebaseConfigurationAsync());
+            
+            // Auto-login for development/testing (only in debug mode)
+#if DEBUG
+            _ = Task.Run(async () => await AutoLoginAsync());
+#endif
         }
 
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Tests Firebase configuration and displays helpful error messages
+        /// </summary>
+        private async Task TestFirebaseConfigurationAsync()
+        {
+            try
+            {
+                await _authService.TestConfigurationAsync();
+                System.Diagnostics.Debug.WriteLine("Firebase configuration test successful");
+                
+                // Clear any existing error message on success
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    if (ErrorMessage.Contains("Firebase"))
+                    {
+                        ErrorMessage = string.Empty;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase configuration test failed: {ex.Message}");
+                
+                // Only show error if it's a real configuration issue, not a temporary network issue
+                if (!ex.Message.Contains("network") && !ex.Message.Contains("timeout"))
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        ErrorMessage = "Firebase connection test failed. Please check your internet connection.";
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Auto-login functionality for development/testing
+        /// </summary>
+        private async Task AutoLoginAsync()
+        {
+            try
+            {
+                // Wait a bit to let the UI load and configuration test complete
+                await Task.Delay(2000);
+                
+                // Check if already logged in
+                if (await _authService.IsUserLoggedInAsync())
+                {
+                    System.Diagnostics.Debug.WriteLine("User already logged in, skipping auto-login");
+                    return;
+                }
+                
+                // Development credentials for auto-login
+                const string devEmail = "svedmanp@gmail.com";
+                const string devPassword = "p0nTus5v";
+                
+                System.Diagnostics.Debug.WriteLine("Attempting auto-login for development...");
+                
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Email = devEmail;
+                    Password = devPassword;
+                    ErrorMessage = "Auto-logging in...";
+                });
+                
+                // Attempt login
+                var user = await _authService.LoginAsync(devEmail, devPassword);
+                
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IsLoggedIn = true;
+                    Email = string.Empty;
+                    Password = string.Empty;
+                    ErrorMessage = string.Empty;
+                });
+                
+                System.Diagnostics.Debug.WriteLine($"Auto-login successful for user: {user.Id}");
+                
+                // Enable flyout and navigate to dashboard
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    if (Shell.Current is AppShell appShell)
+                    {
+                        appShell.SetFlyoutEnabled(true);
+                        appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
+                    }
+                    await Shell.Current.GoToAsync("Dashboard");
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Auto-login failed: {ex.Message}");
+                
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    ErrorMessage = $"Auto-login failed: {ex.Message}";
+                    Email = string.Empty;
+                    Password = string.Empty;
+                });
+            }
+        }
 
         /// <summary>
         /// Checks the current login status asynchronously and auto-navigates if logged in
@@ -121,13 +230,14 @@ namespace TagHunt.ViewModels
                         }
                     }
                     
-                    await Shell.Current.GoToAsync("///Dashboard");
+                    await Shell.Current.GoToAsync("Dashboard");
                 }
             }
             catch (Exception ex)
             {
                 // If there's an error checking login status, just stay on login page
                 System.Diagnostics.Debug.WriteLine($"Error checking login status: {ex.Message}");
+                ErrorMessage = $"Login check failed: {ex.Message}";
                 IsLoggedIn = false;
             }
         }
@@ -166,7 +276,7 @@ namespace TagHunt.ViewModels
                     appShell.SetFlyoutEnabled(true);
                     appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
                 }
-                await Shell.Current.GoToAsync("///Dashboard");
+                await Shell.Current.GoToAsync("Dashboard");
             }
             catch (System.Exception ex)
             {
@@ -210,7 +320,7 @@ namespace TagHunt.ViewModels
                     appShell.SetFlyoutEnabled(true);
                     appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
                 }
-                await Shell.Current.GoToAsync("///Dashboard");
+                await Shell.Current.GoToAsync("Dashboard");
             }
             catch (System.Exception ex)
             {

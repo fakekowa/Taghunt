@@ -50,7 +50,7 @@ public static class MauiProgram
 		{
 			var configService = provider.GetRequiredService<IConfigurationService>();
 			var config = configService.GetFirebaseConfig();
-			return new FirebaseDbService($"https://{config.ProjectId}-default-rtdb.firebaseio.com/");
+			return new FirebaseDbService("https://taghunt-2507b-default-rtdb.europe-west1.firebasedatabase.app/");
 		});
 
 		// Register authentication service with Firebase configuration
@@ -72,6 +72,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<RegisterPage>();
 		builder.Services.AddTransient<DashboardPage>();
 		builder.Services.AddTransient<AccountSettingsPage>();
+		builder.Services.AddTransient<TestPage>();
 
 #if DEBUG
 		// Add debug logging in development builds

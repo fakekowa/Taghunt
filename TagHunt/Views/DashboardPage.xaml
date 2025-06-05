@@ -2,7 +2,6 @@
 <ContentPage x:Class="TagHunt.Views.DashboardPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:behaviors="clr-namespace:TagHunt.Behaviors"
              xmlns:viewmodels="clr-namespace:TagHunt.ViewModels"
              x:DataType="viewmodels:DashboardViewModel"
              Shell.NavBarIsVisible="False"
@@ -11,324 +10,151 @@
              NavigationPage.HasNavigationBar="False"
              Title="Dashboard">
 
-    <RefreshView IsRefreshing="{Binding IsBusy}"
-                 RefreshColor="{StaticResource Primary}"
-                 Command="{Binding RefreshCommand}">
+    <ScrollView VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand">
         
-        <ScrollView VerticalOptions="FillAndExpand"
-                    HorizontalOptions="FillAndExpand">
+        <Grid RowDefinitions="Auto,Auto,Auto,*"
+              Padding="20"
+              RowSpacing="20"
+              VerticalOptions="FillAndExpand"
+              HorizontalOptions="FillAndExpand">
             
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto,*"
-                  VerticalOptions="FillAndExpand"
-                  HorizontalOptions="FillAndExpand">
+            <!-- Header Section -->
+            <Frame Grid.Row="0"
+                   BackgroundColor="{StaticResource Primary}"
+                   CornerRadius="15"
+                   Padding="20"
+                   HasShadow="False">
                 
-                <!-- Safe Area Behavior -->
-                <Grid.Behaviors>
-                    <behaviors:SafeAreaBehavior MinimumPadding="20" />
-                </Grid.Behaviors>
-
-                <!-- Header Section with User Info -->
-                <Border Grid.Row="0"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                        StrokeShape="RoundRectangle 20"
-                        StrokeThickness="0"
-                        Margin="0,10,0,20">
+                <StackLayout Spacing="10">
+                    <Label Text="TagHunt Dashboard"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="White" />
                     
-                    <Grid ColumnDefinitions="Auto,*,Auto"
-                          Padding="20"
-                          RowSpacing="10">
-                        
-                        <!-- User Avatar -->
-                        <Frame Grid.Column="0"
-                               WidthRequest="60"
-                               HeightRequest="60"
-                               CornerRadius="30"
-                               Padding="0"
-                               BackgroundColor="White"
-                               HasShadow="False"
-                               BorderColor="Transparent">
-                            
-                            <Label Text="👤"
-                                   FontSize="30"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"
-                                   TextColor="{StaticResource Primary}" />
-                        </Frame>
-
-                        <!-- Welcome Message and User Info -->
-                        <StackLayout Grid.Column="1"
-                                     Margin="15,0,0,0"
-                                     VerticalOptions="Center">
-                            
-                            <Label Text="{Binding WelcomeMessage}"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   TextColor="White" />
-                            
-                            <Label Text="{Binding LocationSharingStatus}"
-                                   FontSize="14"
-                                   TextColor="White"
-                                   Opacity="0.9" />
-                        </StackLayout>
-
-                        <!-- Settings/Profile Button -->
-                        <Button Grid.Column="2"
-                                WidthRequest="40"
-                                HeightRequest="40"
-                                CornerRadius="20"
-                                BackgroundColor="Transparent"
-                                BorderColor="White"
-                                BorderWidth="2"
-                                Text="⚙️"
-                                FontSize="16"
-                                TextColor="White"
-                                Command="{Binding ViewProfileCommand}" />
-                    </Grid>
-                </Border>
-
-                <!-- Location Status Card -->
-                <Border Grid.Row="1"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
-                        StrokeShape="RoundRectangle 15"
-                        StrokeThickness="0"
-                        Margin="0,0,0,20">
+                    <Label Text="{Binding WelcomeMessage}"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           TextColor="White"
+                           Opacity="0.9" />
                     
-                    <StackLayout Padding="20"
-                                 Spacing="10">
-                        
-                        <Label Text="Location Sharing Status"
-                               FontSize="16"
-                               FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        
-                        <Grid ColumnDefinitions="Auto,*,Auto">
-                            <!-- Status Indicator -->
-                            <Ellipse Grid.Column="0"
-                                     WidthRequest="12"
-                                     HeightRequest="12"
-                                     VerticalOptions="Center"
-                                     Fill="{Binding IsLocationSharingActive, Converter={StaticResource BoolToColorConverter}}" />
-                            
-                            <!-- Status Text -->
-                            <Label Grid.Column="1"
-                                   Text="{Binding LocationSharingStatus}"
-                                   FontSize="14"
-                                   Margin="10,0,0,0"
-                                   VerticalOptions="Center"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-                            
-                            <!-- Active Sessions Count -->
-                            <Label Grid.Column="2"
-                                   Text="{Binding ActiveSharingSessionsCount}"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   VerticalOptions="Center"
-                                   TextColor="{StaticResource Primary}"
-                                   IsVisible="{Binding IsLocationSharingActive}" />
-                        </Grid>
-                    </StackLayout>
-                </Border>
+                    <Label Text="{Binding UserDisplayName, StringFormat='User: {0}'}"
+                           FontSize="16"
+                           HorizontalOptions="Center"
+                           TextColor="White"
+                           Opacity="0.8" />
+                </StackLayout>
+            </Frame>
 
-                <!-- Quick Action Buttons -->
-                <Grid Grid.Row="2"
-                      ColumnDefinitions="*,*"
-                      ColumnSpacing="15"
-                      Margin="0,0,0,20">
-                    
-                    <!-- Share Location Button -->
-                    <Button Grid.Column="0"
-                            Text="📍 Share Location"
-                            FontSize="16"
-                            FontAttributes="Bold"
-                            BackgroundColor="{StaticResource Primary}"
-                            TextColor="White"
-                            CornerRadius="15"
-                            HeightRequest="60"
-                            Command="{Binding ShareLocationCommand}" />
-                    
-                    <!-- Find Friends Button -->
-                    <Button Grid.Column="1"
-                            Text="👥 Find Friends"
-                            FontSize="16"
-                            FontAttributes="Bold"
-                            BackgroundColor="{StaticResource Secondary}"
-                            TextColor="White"
-                            CornerRadius="15"
-                            HeightRequest="60"
-                            Command="{Binding FindFriendsCommand}" />
-                </Grid>
-
-                <!-- Active Sessions Section -->
-                <StackLayout Grid.Row="3"
-                             IsVisible="{Binding ActiveSessions.Count, Converter={StaticResource CountToBoolConverter}}"
-                             Margin="0,0,0,20">
-                    
-                    <Label Text="Active Sharing Sessions"
+            <!-- Status Section -->
+            <Frame Grid.Row="1"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                   CornerRadius="15"
+                   Padding="15"
+                   HasShadow="False">
+                
+                <StackLayout Spacing="10">
+                    <Label Text="Location Status"
                            FontSize="18"
                            FontAttributes="Bold"
-                           Margin="0,0,0,10"
+                           HorizontalOptions="Center"
                            TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                     
-                    <CollectionView ItemsSource="{Binding ActiveSessions}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="viewmodels:LocationSharingSession">
-                                <Border BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
-                                        StrokeShape="RoundRectangle 10"
-                                        StrokeThickness="0"
-                                        Margin="0,0,0,10">
-                                    
-                                    <Grid ColumnDefinitions="Auto,*,Auto"
-                                          Padding="15"
-                                          ColumnSpacing="10">
-                                        
-                                        <!-- Friend Avatar -->
-                                        <Frame Grid.Column="0"
-                                               WidthRequest="40"
-                                               HeightRequest="40"
-                                               CornerRadius="20"
-                                               Padding="0"
-                                               BackgroundColor="White"
-                                               HasShadow="False"
-                                               BorderColor="Transparent">
-                                            
-                                            <Label Text="👤"
-                                                   FontSize="20"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center"
-                                                   TextColor="{StaticResource Primary}" />
-                                        </Frame>
-                                        
-                                        <!-- Friend Info -->
-                                        <StackLayout Grid.Column="1"
-                                                     VerticalOptions="Center">
-                                            <Label Text="{Binding FriendName}"
-                                                   FontSize="14"
-                                                   FontAttributes="Bold"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                                            <Label Text="{Binding TimeRemaining, StringFormat='Expires in {0:hh\\:mm}'}"
-                                                   FontSize="12"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-                                        </StackLayout>
-                                        
-                                        <!-- View on Map Button -->
-                                        <Button Grid.Column="2"
-                                                Text="📍"
-                                                FontSize="16"
-                                                WidthRequest="40"
-                                                HeightRequest="40"
-                                                CornerRadius="20"
-                                                BackgroundColor="{StaticResource Primary}"
-                                                TextColor="White"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=ViewMapCommand}" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <Label Text="{Binding LocationSharingStatus}"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                 </StackLayout>
+            </Frame>
 
-                <!-- Recent Activity Section -->
-                <StackLayout Grid.Row="4"
-                             VerticalOptions="FillAndExpand">
-                    
+            <!-- Action Buttons Section -->
+            <StackLayout Grid.Row="2" Spacing="15">
+                
+                <Label Text="Quick Actions"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                
+                <Button Text="📍 Share Location"
+                        FontSize="16"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        CornerRadius="15"
+                        HeightRequest="50"
+                        Command="{Binding ShareLocationCommand}" />
+                
+                <Button Text="👥 Find Friends"
+                        FontSize="16"
+                        BackgroundColor="{StaticResource Secondary}"
+                        TextColor="{StaticResource Black}"
+                        CornerRadius="15"
+                        HeightRequest="50"
+                        Command="{Binding FindFriendsCommand}" />
+                
+                <Button Text="🔄 Refresh"
+                        FontSize="16"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                        TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        CornerRadius="15"
+                        HeightRequest="50"
+                        Command="{Binding RefreshCommand}" />
+            </StackLayout>
+
+            <!-- Activity Section -->
+            <Frame Grid.Row="3"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                   CornerRadius="15"
+                   Padding="15"
+                   HasShadow="False">
+                
+                <StackLayout Spacing="10">
                     <Label Text="Recent Activity"
                            FontSize="18"
                            FontAttributes="Bold"
-                           Margin="0,0,0,10"
+                           HorizontalOptions="Center"
                            TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                     
-                    <CollectionView ItemsSource="{Binding RecentActivity}"
-                                    VerticalOptions="FillAndExpand">
+                    <CollectionView ItemsSource="{Binding RecentActivity}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:ActivityItem">
-                                <Border BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray800}}"
-                                        StrokeShape="RoundRectangle 10"
-                                        StrokeThickness="0"
-                                        Margin="0,0,0,10">
+                                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
+                                       CornerRadius="10"
+                                       Margin="5"
+                                       Padding="15"
+                                       HasShadow="False">
                                     
-                                    <Grid ColumnDefinitions="Auto,*,Auto"
-                                          Padding="15"
-                                          ColumnSpacing="10">
-                                        
-                                        <!-- Activity Icon -->
-                                        <Label Grid.Column="0"
-                                               Text="{Binding Icon}"
-                                               FontSize="20"
-                                               VerticalOptions="Center" />
-                                        
-                                        <!-- Activity Info -->
-                                        <StackLayout Grid.Column="1"
-                                                     VerticalOptions="Center">
-                                            <Label Text="{Binding Title}"
-                                                   FontSize="14"
-                                                   FontAttributes="Bold"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                                            <Label Text="{Binding Description}"
-                                                   FontSize="12"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-                                        </StackLayout>
-                                        
-                                        <!-- Timestamp -->
-                                        <Label Grid.Column="2"
-                                               Text="{Binding Timestamp, StringFormat='{0:HH:mm}'}"
+                                    <StackLayout Spacing="5">
+                                        <Label Text="{Binding Title}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                                        <Label Text="{Binding Description}"
                                                FontSize="12"
-                                               VerticalOptions="Center"
-                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
-                                    </Grid>
-                                </Border>
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                    </StackLayout>
+                                </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                         
                         <!-- Empty State -->
                         <CollectionView.EmptyView>
-                            <StackLayout VerticalOptions="Center"
-                                         HorizontalOptions="Center"
-                                         Padding="20">
+                            <StackLayout Padding="20"
+                                         HorizontalOptions="Center">
                                 <Label Text="📱"
                                        FontSize="48"
                                        HorizontalOptions="Center" />
                                 <Label Text="No recent activity"
                                        FontSize="16"
-                                       FontAttributes="Bold"
                                        HorizontalOptions="Center"
                                        TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-                                <Label Text="Start sharing your location with friends!"
-                                       FontSize="14"
-                                       HorizontalOptions="Center"
-                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             </StackLayout>
                         </CollectionView.EmptyView>
                     </CollectionView>
                 </StackLayout>
+            </Frame>
+        </Grid>
+    </ScrollView>
 
-                <!-- Floating Action Button Overlay (Optional) -->
-                <Button Grid.Row="4"
-                        Text="📍"
-                        FontSize="24"
-                        WidthRequest="60"
-                        HeightRequest="60"
-                        CornerRadius="30"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        HorizontalOptions="End"
-                        VerticalOptions="End"
-                        Margin="0,0,20,20"
-                        Command="{Binding ShareLocationCommand}"
-                        IsVisible="{Binding IsLocationSharingActive, Converter={StaticResource InverseBoolConverter}}" />
-            </Grid>
-        </ScrollView>
-    </RefreshView>
-
-    <!-- Loading Overlay -->
-    <Grid IsVisible="{Binding IsBusy}"
-          BackgroundColor="Black"
-          Opacity="0.5"
-          VerticalOptions="FillAndExpand"
-          HorizontalOptions="FillAndExpand">
-        
-        <ActivityIndicator IsRunning="{Binding IsBusy}"
-                          Color="{StaticResource Primary}"
-                          VerticalOptions="Center"
-                          HorizontalOptions="Center" />
-    </Grid>
 </ContentPage> 

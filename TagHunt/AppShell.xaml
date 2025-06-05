@@ -114,6 +114,11 @@
 
     <!-- Additional Routes -->
     <ShellContent
+        ContentTemplate="{DataTemplate views:TestPage}"
+        Route="TestPage"
+        Shell.FlyoutBehavior="Disabled" />
+
+    <ShellContent
         ContentTemplate="{DataTemplate views:AccountSettingsPage}"
         Route="AccountSettingsPage"
         Shell.FlyoutBehavior="Flyout" />

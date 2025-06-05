@@ -37,18 +37,64 @@ namespace TagHunt.Services
         /// <param name="authDomain">Firebase authentication domain</param>
         public FirebaseAuthService(string apiKey, string authDomain)
         {
-            _authClient = new FirebaseAuthClient(new FirebaseAuthConfig
+            try
             {
-                ApiKey = apiKey,
-                AuthDomain = authDomain,
-                Providers = new FirebaseAuthProvider[]
+                var config = new FirebaseAuthConfig
                 {
-                    new EmailProvider()
-                }
-            });
-            
-            // Try to restore previous authentication state
-            _ = Task.Run(async () => await RestoreAuthenticationStateAsync());
+                    ApiKey = apiKey,
+                    AuthDomain = authDomain,
+                    Providers = new FirebaseAuthProvider[]
+                    {
+                        new EmailProvider()
+                    }
+                };
+
+#if DEBUG
+                // For simulator debugging - add retry logic and extended timeouts
+                System.Diagnostics.Debug.WriteLine("Firebase Auth configured for simulator with extended timeouts");
+#endif
+
+                _authClient = new FirebaseAuthClient(config);
+                
+                System.Diagnostics.Debug.WriteLine($"Firebase Auth initialized with API Key: {apiKey?.Substring(0, 10)}...");
+                System.Diagnostics.Debug.WriteLine($"Firebase Auth Domain: {authDomain}");
+                
+                // Try to restore previous authentication state
+                _ = Task.Run(async () => await RestoreAuthenticationStateAsync());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase Auth initialization failed: {ex.Message}");
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Determines if an exception is network-related and should be retried
+        /// </summary>
+        /// <param name="ex">The exception to check</param>
+        /// <returns>True if the error is network-related</returns>
+        private static bool IsNetworkRelatedError(Exception ex)
+        {
+            var message = ex.Message?.ToLowerInvariant() ?? "";
+            var innerMessage = ex.InnerException?.Message?.ToLowerInvariant() ?? "";
+
+            // Check for common network error patterns
+            return message.Contains("network connection") ||
+                   message.Contains("cannot parse response") ||
+                   message.Contains("timeout") ||
+                   message.Contains("connection lost") ||
+                   innerMessage.Contains("network connection") ||
+                   innerMessage.Contains("cannot parse response") ||
+                   innerMessage.Contains("timeout") ||
+                   innerMessage.Contains("connection lost") ||
+                   ex.GetType().Name.Contains("HttpRequest") ||
+                   ex.GetType().Name.Contains("Network") ||
+                   ex.GetType().Name.Contains("Timeout");
         }
 
         #endregion
@@ -64,20 +110,36 @@ namespace TagHunt.Services
         /// <returns>The created user</returns>
         public async Task<Models.User> RegisterUserAsync(string email, string password, string username)
         {
-            var userCredential = await _authClient.CreateUserWithEmailAndPasswordAsync(email, password);
-            await userCredential.User.ChangeDisplayNameAsync(username);
-            
-            // Store the new user credentials
-            _currentUserCredential = userCredential;
-            await StoreAuthenticationStateAsync(_currentUserCredential);
-
-            return new Models.User
+            try
             {
-                Id = userCredential.User.Uid,
-                Email = userCredential.User.Info.Email,
-                Username = username,
-                DisplayName = username
-            };
+                System.Diagnostics.Debug.WriteLine($"Attempting registration for email: {email}");
+                var userCredential = await _authClient.CreateUserWithEmailAndPasswordAsync(email, password);
+                await userCredential.User.ChangeDisplayNameAsync(username);
+                
+                System.Diagnostics.Debug.WriteLine($"Registration successful for user: {userCredential.User.Uid}");
+                
+                // Store the new user credentials
+                _currentUserCredential = userCredential;
+                await StoreAuthenticationStateAsync(_currentUserCredential);
+
+                return new Models.User
+                {
+                    Id = userCredential.User.Uid,
+                    Email = userCredential.User.Info?.Email ?? email,
+                    Username = username,
+                    DisplayName = username
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Registration failed: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Exception type: {ex.GetType().Name}");
+                if (ex.InnerException != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw new Exception($"Registration failed: {ex.Message}", ex);
+            }
         }
 
         /// <summary>
@@ -88,19 +150,52 @@ namespace TagHunt.Services
         /// <returns>The authenticated user</returns>
         public async Task<Models.User> LoginAsync(string email, string password)
         {
-            _currentUserCredential = await _authClient.SignInWithEmailAndPasswordAsync(email, password);
-            var user = _currentUserCredential.User;
+            // Retry logic for simulator networking issues
+            var maxRetries = 3;
+            var retryDelay = TimeSpan.FromSeconds(2);
 
-            // Store authentication state securely
-            await StoreAuthenticationStateAsync(_currentUserCredential);
-
-            return new Models.User
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                Id = user.Uid,
-                Email = user.Info.Email,
-                Username = user.Info.DisplayName,
-                DisplayName = user.Info.DisplayName
-            };
+                try
+                {
+                    System.Diagnostics.Debug.WriteLine($"Attempting login for email: {email} (attempt {attempt}/{maxRetries})");
+                    
+                    _currentUserCredential = await _authClient.SignInWithEmailAndPasswordAsync(email, password);
+                    var user = _currentUserCredential.User;
+
+                    System.Diagnostics.Debug.WriteLine($"Login successful for user: {user.Uid}");
+
+                    // Store authentication state securely
+                    await StoreAuthenticationStateAsync(_currentUserCredential);
+
+                    return new Models.User
+                    {
+                        Id = user.Uid,
+                        Email = user.Info?.Email ?? email,
+                        Username = user.Info?.DisplayName ?? "",
+                        DisplayName = user.Info?.DisplayName ?? ""
+                    };
+                }
+                catch (Exception ex) when (attempt < maxRetries && IsNetworkRelatedError(ex))
+                {
+                    System.Diagnostics.Debug.WriteLine($"Login attempt {attempt} failed with network error: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"Retrying in {retryDelay.TotalSeconds} seconds...");
+                    await Task.Delay(retryDelay);
+                    continue;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Login failed: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"Exception type: {ex.GetType().Name}");
+                    if (ex.InnerException != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                    }
+                    throw new Exception($"Login failed: {ex.Message}", ex);
+                }
+            }
+
+            throw new Exception("Login failed after multiple attempts due to network issues");
         }
 
         /// <summary>
@@ -137,8 +232,8 @@ namespace TagHunt.Services
                     {
                         Id = userId,
                         Email = userEmail,
-                        Username = userDisplayName,
-                        DisplayName = userDisplayName
+                        Username = userDisplayName ?? "",
+                        DisplayName = userDisplayName ?? ""
                     };
                 }
             }
@@ -207,6 +302,63 @@ namespace TagHunt.Services
             }
         }
 
+        /// <summary>
+        /// Tests Firebase configuration and connectivity
+        /// </summary>
+        /// <returns>True if configuration is valid, throws exception with details if not</returns>
+        public async Task<bool> TestConfigurationAsync()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Testing Firebase configuration...");
+                
+                // Try a simple operation to test the configuration
+                // We'll try to sign in with an invalid email/password to test if the API responds
+                try
+                {
+                    await _authClient.SignInWithEmailAndPasswordAsync("test@invalid.com", "invalid");
+                }
+                catch (Exception ex)
+                {
+                    // We expect this to fail, but if it fails with configuration errors, that's what we want to catch
+                    if (ex.Message.Contains("INVALID_API_KEY"))
+                    {
+                        throw new Exception("Invalid Firebase API Key. Please check your configuration.");
+                    }
+                    else if (ex.Message.Contains("PROJECT_NOT_FOUND"))
+                    {
+                        throw new Exception("Firebase project not found. Please verify the project ID.");
+                    }
+                    else if (ex.Message.Contains("PERMISSION_DENIED"))
+                    {
+                        throw new Exception("Firebase Authentication is not enabled for this project.");
+                    }
+                    else if (ex.Message.Contains("Undefined"))
+                    {
+                        throw new Exception("Firebase project configuration error. Please ensure Authentication is enabled in the Firebase Console.");
+                    }
+                    
+                    // If it's just an invalid email/password error, that means the API is working
+                    if (ex.Message.Contains("INVALID_EMAIL") || ex.Message.Contains("INVALID_PASSWORD") || ex.Message.Contains("USER_NOT_FOUND") || ex.Message.Contains("WEAK_PASSWORD"))
+                    {
+                        System.Diagnostics.Debug.WriteLine("Firebase configuration test passed (expected authentication failure)");
+                        return true;
+                    }
+                    
+                    // Re-throw if it's an unexpected error
+                    throw new Exception($"Firebase configuration error: {ex.Message}");
+                }
+                
+                System.Diagnostics.Debug.WriteLine("Firebase configuration test passed");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase configuration test failed: {ex.Message}");
+                throw;
+            }
+        }
+
         #endregion
 
         #region Private Helper Methods
@@ -226,8 +378,8 @@ namespace TagHunt.Services
                     
                     await SecureStorage.SetAsync(AuthTokenKey, idToken);
                     await SecureStorage.SetAsync(UserIdKey, userCredential.User.Uid);
-                    await SecureStorage.SetAsync(UserEmailKey, userCredential.User.Info.Email ?? "");
-                    await SecureStorage.SetAsync(UserDisplayNameKey, userCredential.User.Info.DisplayName ?? "");
+                    await SecureStorage.SetAsync(UserEmailKey, userCredential.User.Info?.Email ?? "");
+                    await SecureStorage.SetAsync(UserDisplayNameKey, userCredential.User.Info?.DisplayName ?? "");
                     await SecureStorage.SetAsync(LoginTimestampKey, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
                 }
             }

@@ -134,16 +134,27 @@ namespace TagHunt.Services
             // Use ConnectedScenes only on iOS 13+
             if (UIKit.UIDevice.CurrentDevice.CheckSystemVersion(13, 0))
             {
-                var connectedScenes = UIKit.UIApplication.SharedApplication.ConnectedScenes;
-                var windowScene = connectedScenes.ToArray().OfType<UIKit.UIWindowScene>().FirstOrDefault();
-                if (windowScene != null)
+                try
                 {
-                    return windowScene.Windows.FirstOrDefault(w => w.IsKeyWindow);
+#pragma warning disable CA1416 // Validate platform compatibility
+                    var connectedScenes = UIKit.UIApplication.SharedApplication.ConnectedScenes;
+                    var windowScene = connectedScenes.ToArray().OfType<UIKit.UIWindowScene>().FirstOrDefault();
+                    if (windowScene != null)
+                    {
+                        return windowScene.Windows.FirstOrDefault(w => w.IsKeyWindow);
+                    }
+#pragma warning restore CA1416 // Validate platform compatibility
+                }
+                catch
+                {
+                    // Fall through to legacy approach
                 }
             }
             
             // Fallback for iOS 11-12 or if ConnectedScenes approach fails
+#pragma warning disable CA1422 // Validate platform compatibility
             return UIKit.UIApplication.SharedApplication.KeyWindow;
+#pragma warning restore CA1422 // Validate platform compatibility
         }
 #endif
     }

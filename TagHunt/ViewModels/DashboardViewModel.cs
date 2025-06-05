@@ -43,8 +43,35 @@ public class DashboardViewModel : BaseViewModel
         RefreshCommand = new Command(async () => await OnRefreshAsync());
         ViewProfileCommand = new Command(async () => await OnViewProfileAsync());
         
-        // Load initial data
-        _ = Task.Run(async () => await LoadDashboardDataAsync());
+        // Set default values instead of loading data async in constructor
+        WelcomeMessage = "Welcome to TagHunt!";
+        UserDisplayName = "User";
+        LocationSharingStatus = "Location sharing is off";
+        IsLocationSharingActive = false;
+        ActiveSharingSessionsCount = 0;
+        IsLocationPermissionGranted = false;
+        
+        // Add a sample activity item
+        RecentActivity.Add(new ActivityItem
+        {
+            Title = "Welcome to TagHunt!",
+            Description = "Start by adding friends and sharing your location",
+            Timestamp = DateTime.Now,
+            Type = ActivityType.System
+        });
+        
+        // Load data async after initialization (without blocking constructor)
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            try
+            {
+                await LoadDashboardDataAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load dashboard data: {ex.Message}");
+            }
+        });
     }
 
     #region Properties
@@ -383,8 +410,6 @@ public class DashboardViewModel : BaseViewModel
     {
         await LoadDashboardDataAsync();
     }
-
-
 
     /// <summary>
     /// Handles view profile command

@@ -44,7 +44,7 @@ namespace TagHunt.Services
 #if IOS
             return new FirebaseConfig
             {
-                ApiKey = "AIzaSyDa4Gp42u1jQhj5BkIlZjbdIoemISc_kRM",
+                ApiKey = "AIzaSyDKAfhQ9rYxk-_AYZeYoEjyiN4CuibRhYo",
                 AuthDomain = "taghunt-2507b.firebaseapp.com",
                 ProjectId = "taghunt-2507b"
             };
@@ -58,7 +58,7 @@ namespace TagHunt.Services
 #else
             return new FirebaseConfig
             {
-                ApiKey = "AIzaSyDa4Gp42u1jQhj5BkIlZjbdIoemISc_kRM",
+                ApiKey = "AIzaSyDKAfhQ9rYxk-_AYZeYoEjyiN4CuibRhYo",
                 AuthDomain = "taghunt-2507b.firebaseapp.com",
                 ProjectId = "taghunt-2507b"
             };

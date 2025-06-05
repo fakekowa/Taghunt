@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDa4Gp42u1jQhj5BkIlZjbdIoemISc_kRM</string>
+	<string>AIzaSyDKAfhQ9rYxk-_AYZeYoEjyiN4CuibRhYo</string>
 	<key>GCM_SENDER_ID</key>
 	<string>696328450683</string>
 	<key>PLIST_VERSION</key>
@@ -26,5 +26,7 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:696328450683:ios:1dcf1c301f424c6a1728de</string>
+	<key>DATABASE_URL</key>
+	<string>https://taghunt-2507b-default-rtdb.europe-west1.firebasedatabase.app</string>
 </dict>
 </plist>

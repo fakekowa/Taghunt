@@ -47,5 +47,14 @@
 		<key>UIColorName</key>
 		<string>AccentColor</string>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>background-processing</string>
+	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>TagHunt needs location access to share your location with friends and enable location-based features.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>TagHunt needs location access to share your location with friends and enable location-based features.</string>
 </dict>
 </plist>

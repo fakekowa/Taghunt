@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="TagHunt.Views.TestPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="Blue"
+             Title="Test Page">
+
+    <StackLayout VerticalOptions="CenterAndExpand" 
+                 HorizontalOptions="CenterAndExpand"
+                 Padding="40">
+        
+        <Label Text="TEST PAGE - NAVIGATION WORKS!"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="White"
+               HorizontalOptions="Center"
+               VerticalOptions="Center" />
+               
+        <Label Text="If you can see this, the navigation is working properly."
+               FontSize="16"
+               TextColor="White"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               Margin="0,20,0,0" />
+               
+        <Button Text="Go Back to Login"
+                BackgroundColor="White"
+                TextColor="Blue"
+                CornerRadius="10"
+                FontSize="16"
+                FontAttributes="Bold"
+                Margin="0,40,0,0"
+                Clicked="OnGoBackClicked" />
+        
+    </StackLayout>
+
+</ContentPage> 

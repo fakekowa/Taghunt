@@ -163,33 +163,65 @@ public class FirebaseDbService : IFirebaseDbService
         }
     }
 
-    public async Task<T> GetAsync<T>(string path) where T : class
+    public async Task<T?> GetAsync<T>(string path) where T : class
     {
-        // TODO: Implement Firebase Realtime Database operations
-        throw new NotImplementedException();
+        try
+        {
+            return await _database
+                .Child(path)
+                .OnceSingleAsync<T>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     public async Task SetAsync<T>(string path, T data) where T : class
     {
-        // TODO: Implement Firebase Realtime Database operations
-        throw new NotImplementedException();
+        await _database
+            .Child(path)
+            .PutAsync(data);
     }
 
     public async Task UpdateAsync<T>(string path, T data) where T : class
     {
-        // TODO: Implement Firebase Realtime Database operations
-        throw new NotImplementedException();
+        await _database
+            .Child(path)
+            .PatchAsync(data);
     }
 
     public async Task DeleteAsync(string path)
     {
-        // TODO: Implement Firebase Realtime Database operations
-        throw new NotImplementedException();
+        await _database
+            .Child(path)
+            .DeleteAsync();
     }
 
-    public async Task<List<T>> QueryAsync<T>(string path, string orderBy = null, string equalTo = null) where T : class
+    public async Task<List<T>> QueryAsync<T>(string path, string? orderBy = null, string? equalTo = null) where T : class
     {
-        // TODO: Implement Firebase Realtime Database operations
-        throw new NotImplementedException();
+        try
+        {
+            var query = _database.Child(path);
+            
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                var orderedQuery = query.OrderBy(orderBy);
+                if (!string.IsNullOrEmpty(equalTo))
+                {
+                    var result = await orderedQuery.EqualTo(equalTo).OnceAsync<T>();
+                    return result.Select(r => r.Object).ToList();
+                }
+                var orderedResult = await orderedQuery.OnceAsync<T>();
+                return orderedResult.Select(r => r.Object).ToList();
+            }
+
+            var baseResult = await query.OnceAsync<T>();
+            return baseResult.Select(r => r.Object).ToList();
+        }
+        catch (Exception)
+        {
+            return new List<T>();
+        }
     }
 } 

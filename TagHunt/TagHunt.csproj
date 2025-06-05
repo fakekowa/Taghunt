@@ -18,27 +18,34 @@
         <ApplicationTitle>TagHunt</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.ai_test_1</ApplicationId>
+        <ApplicationId>com.companyname.aitest1</ApplicationId>
         <ApplicationIdGuid>6F5E8E8F-5B8F-4B8F-8F5B-8F5B8F5B8F5B</ApplicationIdGuid>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
+        <!-- App Icons -->
+        <MauiIcon>Resources\AppIcon\appicon.svg</MauiIcon>
+        <MauiIconForeground>Resources\AppIcon\appiconfg.svg</MauiIconForeground>
+        <MauiIconColor>#512BD4</MauiIconColor>
+
+        <!-- Splash Screen -->
+        <MauiSplash>Resources\Splash\splash.svg</MauiSplash>
+        <MauiSplashColor>#512BD4</MauiSplashColor>
+
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        
+        <!-- Disable AOT compilation -->
+        <PublishAot>false</PublishAot>
+        <RunAOTCompilation>false</RunAOTCompilation>
     </PropertyGroup>
 
     <ItemGroup>
-        <!-- App Icon -->
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
-
-        <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
-
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
-        <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*" />
@@ -53,7 +60,7 @@
         </MauiXaml>
     </ItemGroup>
 
-    <ItemGroup>
+        <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
         <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.14" />
@@ -62,14 +69,6 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
         <PackageReference Include="FirebaseDatabase.net" Version="5.0.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
-        <PackageReference Include="Xamarin.AndroidX.Collection.Jvm" Version="1.4.5.2" />
-        <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Core" Version="2.8.5.1" />
-        <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.8.5.1" />
-        <PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.8.3.1" />
-        <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.2.1" />
     </ItemGroup>
 
     <ItemGroup>

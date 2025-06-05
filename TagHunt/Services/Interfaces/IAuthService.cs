@@ -9,5 +9,7 @@ namespace TagHunt.Services.Interfaces
         Task<Models.User?> GetCurrentUserAsync();
         Task UpdateUserProfileAsync(Models.User user);
         Task LogoutAsync();
+        Task<bool> IsUserLoggedInAsync();
+        Task<bool> ResetPasswordAsync(string email);
     }
 } 

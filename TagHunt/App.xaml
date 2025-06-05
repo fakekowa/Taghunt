@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:TagHunt"
              xmlns:converters="clr-namespace:TagHunt.Converters"
-             x:Class="AI_test_1.App">
+             x:Class="TagHunt.App">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

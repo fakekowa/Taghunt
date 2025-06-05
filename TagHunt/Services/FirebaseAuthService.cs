@@ -9,7 +9,7 @@ namespace TagHunt.Services
     public class FirebaseAuthService : IAuthService
     {
         private readonly FirebaseAuthClient _authClient;
-        private Firebase.Auth.User? _currentUser;
+        private Firebase.Auth.UserCredential? _currentUserCredential;
 
         public FirebaseAuthService(string apiKey)
         {
@@ -22,73 +22,67 @@ namespace TagHunt.Services
         public async Task<Models.User> RegisterUserAsync(string email, string password, string username)
         {
             var userCredential = await _authClient.CreateUserWithEmailAndPasswordAsync(email, password);
-            var firebaseUser = userCredential.User;
-            await firebaseUser.UpdateUserProfileAsync(new UserProfile { DisplayName = username });
+            await userCredential.User.ChangeDisplayNameAsync(username);
 
             return new Models.User
             {
-                Id = firebaseUser.Uid,
-                Email = firebaseUser.Info.Email,
-                Username = username
+                Id = userCredential.User.Uid,
+                Email = userCredential.User.Info.Email,
+                Username = username,
+                DisplayName = username
             };
         }
 
         public async Task<Models.User> LoginAsync(string email, string password)
         {
-            var userCredential = await _authClient.SignInWithEmailAndPasswordAsync(email, password);
-            _currentUser = userCredential.User;
+            _currentUserCredential = await _authClient.SignInWithEmailAndPasswordAsync(email, password);
+            var user = _currentUserCredential.User;
 
             return new Models.User
             {
-                Id = _currentUser.Uid,
-                Email = _currentUser.Info.Email,
-                Username = _currentUser.Info.DisplayName
+                Id = user.Uid,
+                Email = user.Info.Email,
+                Username = user.Info.DisplayName,
+                DisplayName = user.Info.DisplayName
             };
         }
 
-        public async Task<Models.User> GetCurrentUserAsync()
+        public Task<Models.User?> GetCurrentUserAsync()
         {
-            if (_currentUser == null) throw new InvalidOperationException("No user is currently logged in");
-
-            return new Models.User
+            if (_currentUserCredential?.User == null)
             {
-                Id = _currentUser.Uid,
-                Email = _currentUser.Info.Email,
-                Username = _currentUser.Info.DisplayName
+                return Task.FromResult<Models.User?>(null);
+            }
+
+            var user = _currentUserCredential.User;
+            var result = new Models.User
+            {
+                Id = user.Uid,
+                Email = user.Info.Email,
+                Username = user.Info.DisplayName,
+                DisplayName = user.Info.DisplayName
             };
+            return Task.FromResult<Models.User?>(result);
         }
 
-        public async Task<bool> UpdateUserProfileAsync(Models.User user)
+        public async Task UpdateUserProfileAsync(Models.User user)
         {
-            try
+            if (_currentUserCredential?.User == null)
             {
-                if (_currentUser == null) throw new InvalidOperationException("No user is currently logged in");
-
-                await _currentUser.UpdateUserProfileAsync(new UserProfile { DisplayName = user.Username });
-                return true;
+                throw new InvalidOperationException("No user is currently logged in");
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            await _currentUserCredential.User.ChangeDisplayNameAsync(user.Username);
         }
 
-        public async Task<bool> LogoutAsync()
+        public Task LogoutAsync()
         {
-            try
-            {
-                _currentUser = null;
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            _currentUserCredential = null;
+            return Task.CompletedTask;
         }
 
         public Task<bool> IsUserLoggedInAsync()
         {
-            return Task.FromResult(_currentUser != null);
+            return Task.FromResult(_currentUserCredential?.User != null);
         }
 
         public async Task<bool> ResetPasswordAsync(string email)

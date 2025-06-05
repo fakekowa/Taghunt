@@ -4,6 +4,7 @@ using TagHunt.ViewModels;
 using TagHunt.Views;
 using Firebase.Auth;
 using Firebase.Database;
+using TagHunt.Services.Interfaces;
 
 namespace TagHunt;
 

@@ -4,7 +4,6 @@ using TagHunt.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using TagHunt.Services.Interfaces;
 
 namespace TagHunt.ViewModels
@@ -47,16 +46,9 @@ namespace TagHunt.ViewModels
             set => SetProperty(ref _errorMessage, value);
         }
 
-        public ICommand LoginCommand { get; }
-        public ICommand RegisterCommand { get; }
-        public ICommand LogoutCommand { get; }
-
         public AuthViewModel(IAuthService authService)
         {
             _authService = authService;
-            LoginCommand = new Command(async () => await LoginAsync());
-            RegisterCommand = new Command(async () => await RegisterAsync());
-            LogoutCommand = new Command(async () => await LogoutAsync());
             CheckLoginStatus();
         }
 

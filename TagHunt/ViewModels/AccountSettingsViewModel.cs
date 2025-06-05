@@ -329,7 +329,7 @@ public class AccountSettingsViewModel : BaseViewModel
                 }
             }
 
-            await Shell.Current.GoToAsync("///Dashboard");
+            await Shell.Current.GoToAsync("//Dashboard");
         }
         catch (Exception ex)
         {

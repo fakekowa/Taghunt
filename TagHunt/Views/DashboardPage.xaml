@@ -4,10 +4,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:TagHunt.ViewModels"
              x:DataType="viewmodels:DashboardViewModel"
-             Shell.NavBarIsVisible="False"
+             Shell.NavBarIsVisible="True"
              Shell.TabBarIsVisible="False"
              BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-             NavigationPage.HasNavigationBar="False"
              Title="Dashboard">
 
     <ScrollView VerticalOptions="FillAndExpand"
@@ -19,7 +18,7 @@
               VerticalOptions="FillAndExpand"
               HorizontalOptions="FillAndExpand">
             
-            <!-- Header Section -->
+            <!-- Welcome Header Section -->
             <Frame Grid.Row="0"
                    BackgroundColor="{StaticResource Primary}"
                    CornerRadius="15"

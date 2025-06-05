@@ -223,14 +223,16 @@ namespace TagHunt.ViewModels
                     
                     if (Shell.Current is AppShell appShell)
                     {
-                        appShell.SetFlyoutEnabled(true);
                         if (currentUser != null)
                         {
                             appShell.UpdateUserInfo(currentUser.DisplayName ?? "User", currentUser.Email ?? "");
                         }
+                        
+                        // Ensure flyout is properly enabled before navigation
+                        await appShell.EnsureFlyoutEnabledAsync();
                     }
                     
-                    await Shell.Current.GoToAsync("Dashboard");
+                    await Shell.Current.GoToAsync("//Dashboard");
                 }
             }
             catch (Exception ex)
@@ -273,10 +275,12 @@ namespace TagHunt.ViewModels
                 // Enable flyout and navigate to dashboard page after successful login
                 if (Shell.Current is AppShell appShell)
                 {
-                    appShell.SetFlyoutEnabled(true);
                     appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
+                    
+                    // Ensure flyout is properly enabled before navigation
+                    await appShell.EnsureFlyoutEnabledAsync();
                 }
-                await Shell.Current.GoToAsync("Dashboard");
+                await Shell.Current.GoToAsync("//Dashboard");
             }
             catch (System.Exception ex)
             {
@@ -317,10 +321,12 @@ namespace TagHunt.ViewModels
                 // Enable flyout and navigate to dashboard page after successful registration
                 if (Shell.Current is AppShell appShell)
                 {
-                    appShell.SetFlyoutEnabled(true);
                     appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
+                    
+                    // Ensure flyout is properly enabled before navigation
+                    await appShell.EnsureFlyoutEnabledAsync();
                 }
-                await Shell.Current.GoToAsync("Dashboard");
+                await Shell.Current.GoToAsync("//Dashboard");
             }
             catch (System.Exception ex)
             {

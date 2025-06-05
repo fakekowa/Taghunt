@@ -34,6 +34,9 @@ public partial class AppShell : Shell
 
 		RegisterRoutes();
 		
+		// Disable flyout initially (will be enabled after login)
+		FlyoutBehavior = FlyoutBehavior.Disabled;
+		
 		// Set binding context to self for command binding
 		BindingContext = this;
 	}
@@ -120,6 +123,20 @@ public partial class AppShell : Shell
 	public void SetFlyoutEnabled(bool enabled)
 	{
 		FlyoutBehavior = enabled ? FlyoutBehavior.Flyout : FlyoutBehavior.Disabled;
+	}
+
+	/// <summary>
+	/// Ensures the flyout is enabled and properly configured for authenticated users
+	/// </summary>
+	public async Task EnsureFlyoutEnabledAsync()
+	{
+		FlyoutBehavior = FlyoutBehavior.Flyout;
+		
+		// Force the shell to update its state
+		await Task.Delay(50);
+		
+		// Trigger a property change to ensure UI updates
+		OnPropertyChanged(nameof(FlyoutBehavior));
 	}
 
 	/// <summary>

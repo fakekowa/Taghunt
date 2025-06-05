@@ -6,7 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:TagHunt"
     xmlns:views="clr-namespace:TagHunt.Views"
-    Shell.FlyoutBehavior="Disabled"
+    Shell.FlyoutBehavior="Flyout"
     Shell.TabBarIsVisible="False"
     Shell.NavBarIsVisible="False"
     FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
@@ -70,6 +70,14 @@
         Shell.TabBarIsVisible="False"
         Shell.NavBarIsVisible="False" />
 
+    <!-- Register Page (No Flyout) -->
+    <ShellContent
+        ContentTemplate="{DataTemplate views:RegisterPage}"
+        Route="RegisterPage"
+        Shell.FlyoutBehavior="Disabled"
+        Shell.TabBarIsVisible="False"
+        Shell.NavBarIsVisible="False" />
+
     <!-- Main App with Flyout Menu -->
     <FlyoutItem Title="Dashboard" 
                 Icon="home.png">
@@ -121,6 +129,6 @@
     <ShellContent
         ContentTemplate="{DataTemplate views:AccountSettingsPage}"
         Route="AccountSettingsPage"
-        Shell.FlyoutBehavior="Flyout" />
+        Shell.FlyoutBehavior="Disabled" />
 
 </Shell>

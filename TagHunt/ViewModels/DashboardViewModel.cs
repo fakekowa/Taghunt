@@ -41,7 +41,6 @@ public class DashboardViewModel : BaseViewModel
         FindFriendsCommand = new Command(async () => await OnFindFriendsAsync());
         ViewMapCommand = new Command(async () => await OnViewMapAsync());
         RefreshCommand = new Command(async () => await OnRefreshAsync());
-        ViewProfileCommand = new Command(async () => await OnViewProfileAsync());
         
         // Set default values instead of loading data async in constructor
         WelcomeMessage = "Welcome to TagHunt!";
@@ -172,11 +171,6 @@ public class DashboardViewModel : BaseViewModel
     /// Command to refresh dashboard data
     /// </summary>
     public ICommand RefreshCommand { get; }
-
-    /// <summary>
-    /// Command to view user profile
-    /// </summary>
-    public ICommand ViewProfileCommand { get; }
 
     #endregion
 
@@ -411,21 +405,7 @@ public class DashboardViewModel : BaseViewModel
         await LoadDashboardDataAsync();
     }
 
-    /// <summary>
-    /// Handles view profile command
-    /// </summary>
-    private async Task OnViewProfileAsync()
-    {
-        try
-        {
-            // Navigate to account settings screen
-            await Shell.Current.GoToAsync("AccountSettingsPage");
-        }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Error", $"Failed to open account settings: {ex.Message}", "OK");
-        }
-    }
+
 
     #endregion
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "696328450683",
+    "project_id": "taghunt-2507b",
+    "storage_bucket": "taghunt-2507b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696328450683:android:217973e50b824e4f1728de",
+        "android_client_info": {
+          "package_name": "com.companyname.aitest1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKAfhQ9rYxk-_AYZeYoEjyiN4CuibRhYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

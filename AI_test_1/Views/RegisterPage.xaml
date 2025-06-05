@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AI_test_1.Views.RegisterPage"
+             xmlns:viewmodel="clr-namespace:AI_test_1.ViewModels"
+             x:DataType="viewmodel:AuthViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="2*,4*,1*"
+          RowSpacing="20"
+          Padding="20">
+
+        <VerticalStackLayout Grid.Row="0"
+                            Spacing="5"
+                            VerticalOptions="Center">
+            <Image Source="taghunt_logo.png"
+                   HeightRequest="120"
+                   HorizontalOptions="Center" />
+            <Label Text="Create Account"
+                   FontSize="32"
+                   HorizontalOptions="Center"
+                   FontAttributes="Bold" />
+            <Label Text="Join the hunt"
+                   FontSize="18"
+                   HorizontalOptions="Center"
+                   TextColor="{StaticResource Gray500}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1"
+                            Spacing="20"
+                            VerticalOptions="Start">
+            <Entry Placeholder="Username"
+                   Text="{Binding Username}" />
+
+            <Entry Placeholder="Email"
+                   Text="{Binding Email}"
+                   Keyboard="Email" />
+            
+            <Entry Placeholder="Password"
+                   Text="{Binding Password}"
+                   IsPassword="True" />
+
+            <Button Text="Create Account"
+                    Command="{Binding RegisterCommand}"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                    HeightRequest="50"
+                    CornerRadius="25" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   HorizontalOptions="Center"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                             IsVisible="{Binding IsLoading}"
+                             HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <HorizontalStackLayout Grid.Row="2"
+                              HorizontalOptions="Center"
+                              VerticalOptions="End"
+                              Spacing="5">
+            <Label Text="Already have an account?"
+                   VerticalOptions="Center" />
+            <Button Text="Sign In"
+                    Style="{StaticResource TextButton}"
+                    Command="{Binding NavigateToLoginCommand}" />
+        </HorizontalStackLayout>
+
+    </Grid>
+
+</ContentPage> 

@@ -15,4 +15,10 @@
         Shell.TabBarIsVisible="False"
         Shell.NavBarIsVisible="False" />
 
+    <ShellContent
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage"
+        Shell.TabBarIsVisible="False"
+        Shell.NavBarIsVisible="False" />
+
 </Shell>

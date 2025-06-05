@@ -89,8 +89,6 @@ The project is currently in active development, with the following phases planne
 
 - iOS
 - Android
-- Windows (planned)
-- macOS (planned)
 
 ## 🤝 Contributing
 

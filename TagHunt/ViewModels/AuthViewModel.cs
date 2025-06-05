@@ -188,7 +188,7 @@ namespace TagHunt.ViewModels
         [RelayCommand]
         private async Task NavigateToLoginAsync()
         {
-            await Shell.Current.GoToAsync(".."); // Go back to login page
+            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 } 

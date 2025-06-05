@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using TagHunt.Services;
 using TagHunt.ViewModels;
 using TagHunt.Views;
-using TagHunt.Models;
 using Firebase.Auth;
 using Firebase.Database;
 using TagHunt.Services.Interfaces;
@@ -35,19 +34,15 @@ public static class MauiProgram
 			builder.Configuration.AddConfiguration(config);
 		}
 
-		// Configure Firebase settings
-		builder.Services.Configure<FirebaseSettings>(builder.Configuration.GetSection("Firebase"));
-
 		// Register services
 		builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-		builder.Services.AddSingleton<FirebaseAuthClient>();
 		builder.Services.AddSingleton<FirebaseClient>();
-		
+
 		builder.Services.AddSingleton<IAuthService>(provider =>
 		{
 			var configService = provider.GetRequiredService<IConfigurationService>();
 			var config = configService.GetFirebaseConfig();
-			
+
 			return new FirebaseAuthService(config.ApiKey, config.AuthDomain);
 		});
 

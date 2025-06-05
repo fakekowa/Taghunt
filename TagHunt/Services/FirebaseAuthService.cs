@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Firebase.Auth;
+using Firebase.Auth.Providers;
 using TagHunt.Models;
 using TagHunt.Services.Interfaces;
 
@@ -16,7 +17,11 @@ namespace TagHunt.Services
             _authClient = new FirebaseAuthClient(new FirebaseAuthConfig
             {
                 ApiKey = apiKey,
-                AuthDomain = authDomain
+                AuthDomain = authDomain,
+                Providers = new FirebaseAuthProvider[]
+                {
+                    new EmailProvider()
+                }
             });
         }
 

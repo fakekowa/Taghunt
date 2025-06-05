@@ -6,69 +6,94 @@
              x:DataType="viewmodel:AuthViewModel"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="2*,4*,1*"
-          RowSpacing="20"
-          Padding="20">
+    <ScrollView x:Name="scrollView">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Grid.Margin>
+                <OnPlatform x:TypeArguments="Thickness">
+                    <On Platform="iOS" Value="20,20,20,20" />
+                    <On Platform="Android" Value="20,20,20,20" />
+                </OnPlatform>
+            </Grid.Margin>
 
-        <VerticalStackLayout Grid.Row="0"
-                            Spacing="5"
-                            VerticalOptions="Center">
-            <Image Source="taghunt_logo.png"
-                   HeightRequest="120"
-                   HorizontalOptions="Center" />
-            <Label Text="TagHunt"
-                   FontSize="32"
-                   HorizontalOptions="Center"
-                   FontAttributes="Bold" />
-            <Label Text="Sign in to continue"
-                   FontSize="18"
-                   HorizontalOptions="Center"
-                   TextColor="{StaticResource Gray500}" />
-        </VerticalStackLayout>
+            <!-- Header Section -->
+            <VerticalStackLayout Grid.Row="0"
+                                Spacing="8"
+                                Margin="0,10,0,15">
+                <Image Source="taghunt_logo.png"
+                       HeightRequest="80"
+                       WidthRequest="80"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Center" />
+                <Label Text="TagHunt"
+                       FontSize="26"
+                       HorizontalOptions="Center"
+                       FontAttributes="Bold"
+                       Margin="0,5,0,0" />
+                <Label Text="Sign in to continue"
+                       FontSize="16"
+                       HorizontalOptions="Center"
+                       TextColor="{StaticResource Gray500}" />
+            </VerticalStackLayout>
 
-        <VerticalStackLayout Grid.Row="1"
-                            Spacing="20"
-                            VerticalOptions="Start">
-            <Entry Placeholder="Email"
-                   Text="{Binding Email}"
-                   Keyboard="Email" />
-            
-            <Entry Placeholder="Password"
-                   Text="{Binding Password}"
-                   IsPassword="True" />
+            <!-- Form Section -->
+            <VerticalStackLayout Grid.Row="1"
+                                Spacing="16"
+                                VerticalOptions="Center"
+                                Margin="0,10">
+                <Entry Placeholder="Email"
+                       Text="{Binding Email}"
+                       Keyboard="Email"
+                       HeightRequest="50"
+                       FontSize="16" />
+                
+                <Entry Placeholder="Password"
+                       Text="{Binding Password}"
+                       IsPassword="True"
+                       HeightRequest="50"
+                       FontSize="16" />
 
-            <Button Text="Sign In"
-                    Command="{Binding LoginCommand}"
-                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
-                    HeightRequest="50"
-                    CornerRadius="25" />
+                <Button Text="Sign In"
+                        Command="{Binding LoginCommand}"
+                        IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                        HeightRequest="50"
+                        CornerRadius="25"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        Margin="0,10,0,0" />
 
-            <Button Text="Forgot Password?"
-                    Command="{Binding ResetPasswordCommand}"
-                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
-                    Style="{StaticResource TextButton}" />
+                <Button Text="Forgot Password?"
+                        Command="{Binding ResetPasswordCommand}"
+                        IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                        Style="{StaticResource TextButton}"
+                        FontSize="14" />
 
-            <Label Text="{Binding ErrorMessage}"
-                   TextColor="Red"
-                   HorizontalOptions="Center"
-                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="Red"
+                       HorizontalOptions="Center"
+                       FontSize="14"
+                       IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
 
-            <ActivityIndicator IsRunning="{Binding IsLoading}"
-                             IsVisible="{Binding IsLoading}"
-                             HorizontalOptions="Center" />
-        </VerticalStackLayout>
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                 IsVisible="{Binding IsLoading}"
+                                 HorizontalOptions="Center"
+                                 Scale="1.2" />
+            </VerticalStackLayout>
 
-        <HorizontalStackLayout Grid.Row="2"
-                              HorizontalOptions="Center"
-                              VerticalOptions="End"
-                              Spacing="5">
-            <Label Text="Don't have an account?"
-                   VerticalOptions="Center" />
-            <Button Text="Sign Up"
-                    Style="{StaticResource TextButton}"
-                    Command="{Binding NavigateToRegisterCommand}" />
-        </HorizontalStackLayout>
+            <!-- Footer Section -->
+            <HorizontalStackLayout Grid.Row="2"
+                                  HorizontalOptions="Center"
+                                  Spacing="5"
+                                  Margin="0,15,0,10">
+                <Label Text="Don't have an account?"
+                       VerticalOptions="Center"
+                       FontSize="14" />
+                <Button Text="Sign Up"
+                        Style="{StaticResource TextButton}"
+                        Command="{Binding NavigateToRegisterCommand}"
+                        FontSize="14" />
+            </HorizontalStackLayout>
 
-    </Grid>
+        </Grid>
+    </ScrollView>
 
 </ContentPage> 

@@ -92,6 +92,161 @@ Create a simple location-sharing app with the following core features:
 - [ ] Implement proper view sizing and constraints
 - [ ] Handle keyboard appearance/disappearance gracefully
 
+## .NET MAUI Development Guidelines
+
+### Safe Area Handling - CRITICAL IMPLEMENTATION RULES
+
+**❌ NEVER DO:**
+- Do not use hardcoded margins or padding values like `Value="20,50,20,50"`
+- Do not use platform-specific hardcoded values in `<OnPlatform>` tags for safe areas
+- Do not guess at device-specific safe area measurements
+- Do not use fixed pixel values that don't adapt to different devices
+
+**✅ ALWAYS DO:**
+- Use the `SafeAreaBehavior` for dynamic safe area handling
+- Implement behaviors that automatically detect device safe areas at runtime
+- Use minimum padding fallbacks that work across all devices
+- Test on multiple device sizes (iPhone SE, iPhone 14 Pro Max, various Android devices)
+
+**Required Implementation Pattern:**
+```xml
+<!-- Correct safe area implementation -->
+<Grid RowDefinitions="Auto,*,Auto"
+      VerticalOptions="FillAndExpand"
+      HorizontalOptions="FillAndExpand">
+    <Grid.Behaviors>
+        <behaviors:SafeAreaBehavior MinimumPadding="20" />
+    </Grid.Behaviors>
+    <!-- Content here -->
+</Grid>
+```
+
+### Layout Container Guidelines
+
+**ContentPage Setup:**
+```xml
+<ContentPage Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+             NavigationPage.HasNavigationBar="False">
+```
+
+**ScrollView Configuration:**
+```xml
+<ScrollView VerticalOptions="FillAndExpand"
+            HorizontalOptions="FillAndExpand">
+```
+
+**Grid Layout Best Practices:**
+```xml
+<Grid RowDefinitions="Auto,*,Auto"
+      VerticalOptions="FillAndExpand"
+      HorizontalOptions="FillAndExpand">
+```
+
+### Cross-Platform Compatibility Patterns
+
+**Theme-Aware Styling:**
+```xml
+<!-- Always use theme bindings for colors -->
+BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+```
+
+**Platform-Specific Adaptations (when needed):**
+- Use only for genuine platform differences, not safe areas
+- Example: Different animation styles, platform-specific features
+- Never for layout measurements or safe area handling
+
+### Dependency Injection Patterns
+
+**Service Registration:**
+```csharp
+// In MauiProgram.cs
+builder.Services.AddSingleton<IAuthService, FirebaseAuthService>();
+builder.Services.AddTransient<LoginPage>();
+```
+
+**Constructor Injection:**
+```csharp
+public LoginPage(AuthViewModel viewModel)
+{
+    InitializeComponent();
+    BindingContext = viewModel;
+}
+```
+
+### Behavior Implementation Guidelines
+
+**Creating Reusable Behaviors:**
+- Inherit from `Behavior<T>` where T is the target control type
+- Use `BindableProperty` for configurable parameters
+- Implement platform-specific logic using conditional compilation (`#if IOS`, `#if ANDROID`)
+- Provide sensible fallback values
+
+**Behavior Usage:**
+```xml
+<Control.Behaviors>
+    <behaviors:CustomBehavior Parameter="Value" />
+</Control.Behaviors>
+```
+
+### File Organization Standards
+
+**Required Folder Structure:**
+```
+/Behaviors/          - Custom behaviors (SafeAreaBehavior, etc.)
+/Converters/         - Value converters
+/Models/             - Data models
+/Services/           - Business logic services
+/Services/Interfaces/- Service contracts
+/ViewModels/         - MVVM view models
+/Views/              - XAML pages and controls
+```
+
+**Naming Conventions:**
+- Behaviors: `[Purpose]Behavior.cs` (e.g., `SafeAreaBehavior.cs`)
+- Services: `[Domain]Service.cs` (e.g., `AuthService.cs`)
+- Interfaces: `I[ServiceName].cs` (e.g., `IAuthService.cs`)
+- Views: `[Purpose]Page.xaml` (e.g., `LoginPage.xaml`)
+
+### Performance and Resource Management
+
+**Image and Asset Handling:**
+- Use vector graphics (SVG) for scalable icons
+- Implement proper image caching for user avatars
+- Use appropriate image sizes for different screen densities
+
+**Memory Management:**
+- Dispose of services and subscriptions properly
+- Use weak references for event handlers where appropriate
+- Implement proper lifecycle management in view models
+
+### Testing and Device Compatibility
+
+**Required Testing Matrix:**
+- iOS: iPhone SE (small screen), iPhone 14 (standard), iPhone 14 Pro Max (large)
+- Android: Various screen sizes and densities
+- Orientation: Both portrait and landscape
+- Theme: Both light and dark modes
+
+**Debug Verification Checklist:**
+- [ ] No black areas at screen edges
+- [ ] Content properly spaced from device edges
+- [ ] UI elements don't overlap with system UI (notches, navigation bars)
+- [ ] Consistent appearance across different devices
+- [ ] Proper keyboard handling (content doesn't get hidden)
+
+### Error Prevention Rules
+
+1. **Always validate layout on multiple device sizes before considering complete**
+2. **Never use magic numbers for spacing - always use behavior-based or system-calculated values**
+3. **Test safe area handling on devices with notches/Dynamic Islands**
+4. **Verify full-screen utilization requirements are met**
+5. **Ensure responsive design works on both phones and tablets**
+
+*These guidelines must be followed for all future development to ensure consistent, professional, and device-compatible user interfaces.*
+
 ### 1. Authentication Views
 
 #### 1.1 Welcome/Splash Screen

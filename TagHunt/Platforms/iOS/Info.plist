@@ -32,5 +32,9 @@
 	<string>UIStatusBarStyleDefault</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UIFullscreen</key>
+	<true/>
 </dict>
 </plist>

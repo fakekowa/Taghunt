@@ -14,6 +14,7 @@
             <!-- Converters -->
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
             <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+            <converters:SafeAreaConverter x:Key="SafeAreaConverter" />
 
             <!-- Button Styles -->
             <Style x:Key="TextButton" TargetType="Button">

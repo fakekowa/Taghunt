@@ -1,5 +1,18 @@
 # TagHunt 🎯
 
+![GitHub](https://img.shields.io/github/license/fakekowa/Taghunt)
+
+## Project Progress
+```
+Phase 1 (Basic POC) [===>................] 15%
+├── User Authentication   [=>..................] 5%
+├── Location Sharing     [...................] 0%
+├── Map Integration      [...................] 0%
+└── Friend Management    [...................] 0%
+
+Phase 2 (Full Game)    [...................] 0%
+```
+
 TagHunt is an innovative location-based multiplayer mobile game that brings the classic game of tag into the digital age. Using GPS coordinates and real-time tracking, players engage in an exciting chase across real-world locations, switching between hunter and hunted roles in this dynamic and interactive experience.
 
 ## 🎮 Game Features
@@ -90,7 +103,10 @@ We welcome contributions! If you're interested in improving TagHunt, please:
 
 ## 📄 License
 
-This project is licensed under [License Type] - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. This license was chosen to be compatible with:
+- .NET MAUI (MIT License)
+- Firebase .NET SDK (MIT License)
+- Other NuGet dependencies (all MIT-compatible)
 
 ---
 

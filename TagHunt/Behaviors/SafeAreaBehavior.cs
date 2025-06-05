@@ -40,7 +40,7 @@ namespace TagHunt.Behaviors
         /// Bindable property for minimum padding value
         /// </summary>
         public static readonly BindableProperty MinimumPaddingProperty = 
-            BindableProperty.Create(nameof(MinimumPadding), typeof(double), typeof(SafeAreaBehavior), 20.0);
+            BindableProperty.Create(nameof(MinimumPadding), typeof(double), typeof(SafeAreaBehavior), 10.0);
 
         #endregion
 
@@ -133,7 +133,7 @@ namespace TagHunt.Behaviors
 #elif ANDROID
             return GetAndroidSafeAreaInsets();
 #else
-            return new Thickness(MinimumPadding);
+            return new Thickness(0);
 #endif
         }
 
@@ -167,7 +167,13 @@ namespace TagHunt.Behaviors
                 if (window?.SafeAreaInsets != null)
                 {
                     var insets = window.SafeAreaInsets;
-                    return new Thickness(insets.Left, insets.Top, insets.Right, insets.Bottom);
+                    // Only apply meaningful safe area values - avoid unnecessary padding
+                    return new Thickness(
+                        insets.Left > 0 ? insets.Left : 0,
+                        insets.Top > 0 ? insets.Top : 0,
+                        insets.Right > 0 ? insets.Right : 0,
+                        insets.Bottom > 0 ? insets.Bottom : 0
+                    );
                 }
             }
             catch
@@ -175,8 +181,8 @@ namespace TagHunt.Behaviors
                 // Fallback if we can't get safe area
             }
             
-            // Default iOS safe area values for iPhone X+ style devices
-            return new Thickness(0, 44, 0, 34);
+            // Return zero padding for devices without safe area needs
+            return new Thickness(0);
         }
 #endif
 
@@ -187,8 +193,9 @@ namespace TagHunt.Behaviors
         /// <returns>Android safe area insets</returns>
         private Thickness GetAndroidSafeAreaInsets()
         {
-            // For Android, we generally use standard padding as the system handles safe areas
-            return new Thickness(0, 0, 0, 0);
+            // For Android, we generally don't need safe area padding as the system handles it
+            // Only apply minimal padding where absolutely necessary
+            return new Thickness(0);
         }
 #endif
     }

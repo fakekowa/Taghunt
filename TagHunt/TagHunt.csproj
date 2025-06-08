@@ -37,6 +37,14 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 
+        <!-- iOS Entitlements -->
+        <CodesignEntitlements Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">Platforms\iOS\Entitlements.plist</CodesignEntitlements>
+        
+        <!-- iOS Automatic Provisioning -->
+        <EnableDefaultIosItems Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">true</EnableDefaultIosItems>
+        <CodesignKey Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">iPhone Developer</CodesignKey>
+        <CodesignProvision Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">Automatic</CodesignProvision>
+
         <!-- Disable AOT compilation -->
         <PublishAot>false</PublishAot>
         <RunAOTCompilation>false</RunAOTCompilation>

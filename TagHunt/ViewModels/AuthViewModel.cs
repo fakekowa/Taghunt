@@ -92,11 +92,6 @@ namespace TagHunt.ViewModels
             
             // Test Firebase configuration in background 
             _ = Task.Run(async () => await TestFirebaseConfigurationAsync());
-            
-            // Auto-login for development/testing (only in debug mode)
-#if DEBUG
-            _ = Task.Run(async () => await AutoLoginAsync());
-#endif
         }
 
         #endregion
@@ -138,86 +133,24 @@ namespace TagHunt.ViewModels
         }
 
         /// <summary>
-        /// Auto-login functionality for development/testing
-        /// </summary>
-        private async Task AutoLoginAsync()
-        {
-            try
-            {
-                // Wait a bit to let the UI load and configuration test complete
-                await Task.Delay(2000);
-                
-                // Check if already logged in
-                if (await _authService.IsUserLoggedInAsync())
-                {
-                    System.Diagnostics.Debug.WriteLine("User already logged in, skipping auto-login");
-                    return;
-                }
-                
-                // Development credentials for auto-login
-                const string devEmail = "svedmanp@gmail.com";
-                const string devPassword = "p0nTus5v";
-                
-                System.Diagnostics.Debug.WriteLine("Attempting auto-login for development...");
-                
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    Email = devEmail;
-                    Password = devPassword;
-                    ErrorMessage = "Auto-logging in...";
-                });
-                
-                // Attempt login
-                var user = await _authService.LoginAsync(devEmail, devPassword);
-                
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    IsLoggedIn = true;
-                    Email = string.Empty;
-                    Password = string.Empty;
-                    ErrorMessage = string.Empty;
-                });
-                
-                System.Diagnostics.Debug.WriteLine($"Auto-login successful for user: {user.Id}");
-                
-                // Enable flyout and navigate to dashboard
-                MainThread.BeginInvokeOnMainThread(async () =>
-                {
-                    if (Shell.Current is AppShell appShell)
-                    {
-                        appShell.SetFlyoutEnabled(true);
-                        appShell.UpdateUserInfo(user.DisplayName ?? "User", user.Email ?? "");
-                    }
-                    await Shell.Current.GoToAsync("Dashboard");
-                });
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Auto-login failed: {ex.Message}");
-                
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    ErrorMessage = $"Auto-login failed: {ex.Message}";
-                    Email = string.Empty;
-                    Password = string.Empty;
-                });
-            }
-        }
-
-        /// <summary>
         /// Checks the current login status asynchronously and auto-navigates if logged in
         /// </summary>
         private async void CheckLoginStatus()
         {
             try
             {
-                // Give the auth service time to restore state
-                await Task.Delay(500);
+                System.Diagnostics.Debug.WriteLine("CheckLoginStatus: Starting login status check...");
                 
+                // The FirebaseAuthService now properly awaits restoration in IsUserLoggedInAsync()
+                // No need for arbitrary delays here
                 IsLoggedIn = await _authService.IsUserLoggedInAsync();
+                
+                System.Diagnostics.Debug.WriteLine($"CheckLoginStatus: IsLoggedIn = {IsLoggedIn}");
                 
                 if (IsLoggedIn)
                 {
+                    System.Diagnostics.Debug.WriteLine("CheckLoginStatus: User is logged in, getting user data...");
+                    
                     // User is already logged in, enable flyout and navigate to dashboard
                     var currentUser = await _authService.GetCurrentUserAsync();
                     
@@ -225,6 +158,7 @@ namespace TagHunt.ViewModels
                     {
                         if (currentUser != null)
                         {
+                            System.Diagnostics.Debug.WriteLine($"CheckLoginStatus: Updating UI for user {currentUser.Email}");
                             appShell.UpdateUserInfo(currentUser.DisplayName ?? "User", currentUser.Email ?? "");
                         }
                         
@@ -232,7 +166,12 @@ namespace TagHunt.ViewModels
                         await appShell.EnsureFlyoutEnabledAsync();
                     }
                     
+                    System.Diagnostics.Debug.WriteLine("CheckLoginStatus: Navigating to Dashboard...");
                     await Shell.Current.GoToAsync("//Dashboard");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("CheckLoginStatus: User not logged in, staying on login page");
                 }
             }
             catch (Exception ex)

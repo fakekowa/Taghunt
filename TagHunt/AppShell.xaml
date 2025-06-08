@@ -97,6 +97,12 @@
                       Route="Map" />
     </FlyoutItem>
 
+    <FlyoutItem Title="🔧 Test Page" 
+                Icon="settings.png">
+        <ShellContent ContentTemplate="{DataTemplate views:TestPage}" 
+                      Route="TestPage" />
+    </FlyoutItem>
+
     <!-- Flyout Footer with Settings and Logout -->
     <Shell.FlyoutFooter>
         <StackLayout Padding="20,10"
@@ -121,10 +127,6 @@
     </Shell.FlyoutFooter>
 
     <!-- Additional Routes -->
-    <ShellContent
-        ContentTemplate="{DataTemplate views:TestPage}"
-        Route="TestPage"
-        Shell.FlyoutBehavior="Disabled" />
 
     <ShellContent
         ContentTemplate="{DataTemplate views:AccountSettingsPage}"

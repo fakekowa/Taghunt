@@ -7,33 +7,48 @@
              BackgroundColor="Blue"
              Title="Test Page">
 
-    <StackLayout VerticalOptions="CenterAndExpand" 
-                 HorizontalOptions="CenterAndExpand"
-                 Padding="40">
+    <ScrollView VerticalOptions="FillAndExpand" 
+                HorizontalOptions="FillAndExpand"
+                Padding="40">
         
-        <Label Text="TEST PAGE - NAVIGATION WORKS!"
-               FontSize="24"
-               FontAttributes="Bold"
-               TextColor="White"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
-               
-        <Label Text="If you can see this, the navigation is working properly."
-               FontSize="16"
-               TextColor="White"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"
-               Margin="0,20,0,0" />
-               
-        <Button Text="Go Back to Login"
-                BackgroundColor="White"
-                TextColor="Blue"
-                CornerRadius="10"
-                FontSize="16"
-                FontAttributes="Bold"
-                Margin="0,40,0,0"
-                Clicked="OnGoBackClicked" />
-        
-    </StackLayout>
+        <StackLayout Spacing="20">
+            
+            <Label Text="TEST PAGE - NAVIGATION WORKS!"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center" />
+                   
+            <Label Text="If you can see this, the navigation is working properly."
+                   FontSize="16"
+                   TextColor="White"
+                   HorizontalOptions="Center" />
+                   
+            <Button Text="🔍 Test Authentication Persistence"
+                    BackgroundColor="Green"
+                    TextColor="White"
+                    CornerRadius="10"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    Clicked="OnTestAuthClicked" />
+                    
+            <Label x:Name="TestResultLabel"
+                   Text=""
+                   FontSize="14"
+                   TextColor="White"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+                   
+            <Button Text="Go Back to Login"
+                    BackgroundColor="White"
+                    TextColor="Blue"
+                    CornerRadius="10"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    Clicked="OnGoBackClicked" />
+            
+        </StackLayout>
+
+    </ScrollView>
 
 </ContentPage> 
